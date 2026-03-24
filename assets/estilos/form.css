@@ -1,0 +1,251 @@
+
+/*Clase para el Formulario de Inicio de Sesion*/
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 70vh; /* Para que no pegue al footer si hay poco contenido */
+    padding: 40px 20px;
+    background-color: #f4f4f4;
+}
+
+.formulario {
+    background: #21632a;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 300px;
+}
+
+.formulario h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #fff;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.formulario b{
+    color: #f4f4f4;
+}
+
+.formulario a{
+    color: #f4f4f4;
+}
+
+.formulario a:hover{
+    color: #50b95e;
+}
+
+/* Grupos de inputs */
+.input-group {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.input-group label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #fff;
+}
+
+.input-group input {
+    padding: 12px;
+    border: 2px solid #eee;
+    border-radius: 6px;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+.input-group input:focus {
+    border-color: #ccc; /* El verde de tu marca */
+}
+
+/* Estilos para Select y Textarea */
+
+.input-group select,
+.input-group textarea {
+    padding: 12px;
+    border: 2px solid #eee;
+    border-radius: 6px;
+    outline: none;
+    font-family: inherit; /* Para que usen la misma fuente que el resto */
+    font-size: 0.95rem;
+    background-color: #fff;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    width: 100%;
+    box-sizing: border-box; /* Asegura que el padding no desborde el ancho */
+}
+
+/* Específicos para Textarea */
+.input-group textarea {
+    min-height: 120px; /* Altura mínima inicial */
+    resize: vertical;  /* Permite al usuario estirarlo solo hacia abajo */
+    line-height: 1.5;
+}
+
+/* Específicos para Select */
+.input-group select {
+    cursor: pointer;
+    appearance: none; /* Quita el estilo por defecto del sistema */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2321632a' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: calc(100% - 15px) center; /* Coloca la flecha a la derecha */
+    padding-right: 40px;
+}
+
+/* Estados Focus (siguiendo tu lógica de marca) */
+.input-group select:focus,
+.input-group textarea:focus {
+    border-color: #50b95e; /* Verde más vivo al escribir */
+    box-shadow: 0 0 8px rgba(80, 185, 94, 0.2);
+}
+
+/* Estilo para las opciones del select */
+.input-group select option {
+    color: #333;
+    padding: 10px;
+}
+
+/* Contenedor del checkbox */
+.checkbox-group {
+    display: flex;       /* Activa el modo fila */
+    flex-direction: row; /* Fuerza a que sea horizontal */
+    align-items: center; /* Centra el check con el texto verticalmente */
+    gap: 10px;           /* Espacio entre el cuadradito y el texto */
+    margin: 15px 0;      /* Espacio arriba y abajo del bloque */
+    cursor: pointer;
+}
+
+/* Estilo opcional para el checkbox */
+.checkbox-group input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: #349b41; /* Color verde deportivo al marcarlo */
+}
+
+.checkbox-group label {
+    font-size: 0.9rem;
+    color: #f4f4f4;
+    cursor: pointer;
+    margin: 0; /* Quitamos márgenes que puedan venir de otros labels */
+}
+
+/* Manejo de filas Flexbox */
+.fila-form {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 10px;
+    flex-wrap: wrap; /* Para que en móviles se vea bien */
+}
+
+/* Proporciones de las columnas */
+.flex-1 { flex: 1; min-width: 150px; }
+.flex-2 { flex: 2; min-width: 200px; }
+.flex-0-5 { flex: 0.5; min-width: 100px; }
+
+/* Sección de Tallas */
+.tallas-seccion {
+    margin: 20px 0;
+    padding: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.tallas-titulo {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 10px;
+    color: #fff;
+    font-size: 0.95rem;
+}
+
+.tallas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    gap: 10px;
+}
+
+.talla-item {
+    text-align: center;
+    background: #fff;
+    padding: 8px;
+    border-radius: 5px;
+}
+
+.talla-item label {
+    color: #21632a;
+    font-weight: bold;
+    font-size: 0.8rem;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.talla-item input {
+    width: 100%;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 5px;
+}
+
+/*Botones para el resto de Formularios*/
+
+.acciones-form {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.acciones-form button{
+    width: 100%;
+    padding: 14px;
+    background-color: #f4f4f4;
+    color: #21632a;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: transform 0.2s, background 0.3s;
+}
+
+/* Botón de Login o guardar datos del formulario */
+.btn-login {
+    width: 100%;
+    padding: 14px;
+    background-color: #f4f4f4;
+    color: #21632a;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: transform 0.2s, background 0.3s;
+}
+
+.btn-login:hover {
+    background-color: #50b95e;
+    border: 2px solid #f4f4f4;
+    color: #f4f4f4;
+    transform: translateY(-2px);
+}
+
+.reg-link {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.reg-link a {
+    color: var(--color-secundario);
+    font-weight: bold;
+    text-decoration: none;
+}
+

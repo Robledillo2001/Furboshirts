@@ -1,0 +1,73 @@
+/* Contenedor principal del registro */
+.registro-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 20px;
+    min-height: 80vh;
+}
+
+/* Caja del formulario */
+.registro-container .formulario {
+    background: #21632a;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 500px; /* Un poco más ancho que el login */
+    border-top: 5px solid #f4f4f4; /* Detalle verde arriba */
+}
+
+.registro-container h2 {
+    text-align: center;
+    color: #f4f4f4;
+    font-weight: 800;
+    margin-bottom: 30px;
+    letter-spacing: -1px;
+}
+
+/* Grupos de entrada */
+.input-group {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.input-group label {
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #f4f4f4;
+    margin-bottom: 8px;
+}
+
+.input-group input {
+    padding: 12px 15px;
+    border: 2px solid #f4f4f4;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+/* Efecto al seleccionar el input */
+.input-group input:focus {
+    border-color: #21632a;
+    box-shadow: 0 0 8px rgba(33, 99, 42, 0.2);
+}
+
+/* Enlace de volver */
+.registro-container a {
+    display: block;
+    text-align: center;
+    margin-top: 20px;
+    color: #f4f4f4;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: color 0.3s;
+}
+
+.registro-container a:hover {
+    color: #15411b;
+}

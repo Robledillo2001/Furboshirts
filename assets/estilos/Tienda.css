@@ -1,0 +1,74 @@
+/* Contenedor principal del Panel */
+.container {
+    max-width: 400px;
+    margin: 40px auto;
+    padding: 0 20px;
+    text-align: center;
+}
+
+.container h1 {
+    font-size: 2.2rem;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.container p {
+    color: #666;
+    margin-bottom: 40px;
+}
+
+/* El nuevo div que envuelve los enlaces */
+.enlaces {
+    display: grid;
+    /* Crea columnas de al menos 250px que se ajustan solas */
+    grid-template-columns: repeat(2,1fr);
+    gap: 10px; /* Espacio entre tarjetas */
+}
+
+/* Estilo para cada bloque de enlace */
+.enlace a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 120px;
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    text-decoration: none;
+    color: #21632a;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    padding: 20px;
+}
+
+.enlace h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+/* Efectos al pasar el ratón */
+.enlace a:hover {
+    transform: translateY(-5px);
+    background-color: #fcfcfc;
+    border-color: #50b95e; /* El color de tu logo */
+    box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+}
+
+.enlace a:hover h3 {
+    color: #50b95e;
+}
+
+.enlace:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+    width: 50%;
+    margin: 0 auto; 
+}
+
+/* Responsive: si la pantalla es muy pequeña, un enlace por fila */
+@media (max-width: 600px) {
+    .enlaces {
+        grid-template-columns: 1fr;
+    }
+}

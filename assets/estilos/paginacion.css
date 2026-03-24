@@ -1,0 +1,206 @@
+.paginacion {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+}
+
+.btn-pag {
+    padding: 8px 12px;
+    border: 1px solid #21632a;
+    text-decoration: none;
+    color: #333;
+    border-radius: 4px;
+}
+
+.btn-pag.active {
+    background-color: #50b95e;
+    color: #f4f4f4;
+    border-color: #21632a;
+}
+
+.btn-pag:hover:not(.active) {
+    background-color: #21632a;
+    color: #f4f4f4;
+}
+
+/*Boton para añadir datos en la BSD*/
+.header-seccion {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.botones-header{
+    display:flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.btn-anadir {
+    display: flex;
+    background-color: #28a745; /* Verde éxito */
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    gap: 20px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background 0.3s ease;
+}
+
+.btn-anadir:hover {
+    background-color: #218838;
+}
+.btn-anadir {
+    background-color: #28a745; /* Verde éxito */
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background 0.3s ease;
+}
+
+.btn-anadir:hover {
+    background-color: #218838;
+}
+
+
+/* Contenedor de la tabla */
+.container-tabla {
+    width: 95%;
+    margin: 20px auto;
+    background: #f4f4f4;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    overflow: hidden; /* Para que las esquinas de la tabla respeten el border-radius */
+}
+
+/* Tabla General */
+.tabla-gestion {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.tabla-gestion img{
+    width: 85px;
+    height: 90px;
+}
+
+/* Cabecera */
+.tabla-gestion thead {
+    background-color: #21632a; /* Color oscuro profesional */
+    color: #f4f4f4;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+}
+
+.tabla-gestion th, .tabla-gestion td {
+    padding: 15px 12px;
+    text-align: center;
+    border-bottom: 1px solid #f4f4f4;
+}
+
+/* Estilo de la imagen */
+.img-user {
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #f4f4f4;
+}
+
+/* Filas cebra (opcional para leer mejor) */
+.tabla-gestion tbody tr:nth-child(even) {
+    background-color: #f4f4f4;
+}
+
+.tabla-gestion tbody tr:hover {
+    background-color: #f4f4f4; /* Resaltado al pasar el ratón */
+}
+
+/* Botones de acción */
+.acciones {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.btn-icon {
+    font-size: 1.1rem;
+    transition: transform 0.2s;
+    text-decoration: none;
+}
+
+.btn-icon.edit { color: #50b95e; }    /* Verde */
+.btn-icon.delete { color: #e74c3c; }  /* Rojo */
+
+.btn-icon:hover {
+    transform: scale(1.2);
+}
+
+/* Layout Principal */
+.layout-gestion {
+    display: flex;
+    min-height: 80vh;
+    background-color: #f4f4f4;
+}
+
+/* Menú Lateral (Sidebar) */
+.sidebar-gestion {
+    width: 250px;
+    background-color: #21632a;
+    color: #f4f4f4;
+    padding: 20px 0;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+}
+
+.sidebar-gestion h3 {
+    text-align: center;
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    color: #f4f4f4;
+    border-bottom: 1px solid #f4f4f4;
+    padding-bottom: 10px;
+}
+
+.sidebar-gestion nav a {
+    display: block;
+    padding: 15px 25px;
+    color: #f4f4f4;
+    text-decoration: none;
+    transition: all 0.3s;
+    font-weight: 500;
+}
+
+.sidebar-gestion nav a i {
+    margin-right: 10px;
+    width: 20px;
+}
+
+.sidebar-gestion nav a:hover, 
+.sidebar-gestion nav a.active {
+    background-color: #50b95e;
+    color: #fff;
+    border-left: 4px solid #f4f4f4; /* Color de acento de tu web */
+}
+
+/* Contenido Principal */
+.contenido-gestion {
+    flex: 1;
+    padding: 30px;
+}
+
+.titulo-seccion {
+    margin-bottom: 20px;
+    color: #333;
+    font-size: 1.8rem;
+}
+
+/* Ajuste de la tabla que ya tenías */
+.container-tabla {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}

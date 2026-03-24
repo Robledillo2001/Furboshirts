@@ -1,0 +1,178 @@
+/* --- ESTILOS DEL CARRUSEL --- */
+.carousel {
+    position: relative;
+    width: 100%;
+    max-height: 500px;
+    overflow: hidden;
+    background-color: #000;
+}
+
+.carousel-container {
+    position: relative;
+    width: 100%;
+}
+
+.slide {
+    display: none; /* Ocultos por defecto */
+    position: relative;
+    width: 100%;
+    animation: fade 0.8s ease-in-out;
+}
+
+.slide.active {
+    display: block;
+}
+
+.slide img {
+    width: 100%;
+    height: 500px;
+    object-fit: cover; /* Ajusta la imagen sin deformarla */
+    filter: brightness(60%); /* Oscurece un poco la imagen para que el texto resalte */
+}
+
+/* Contenido del Slide */
+.slide-content {
+    position: absolute;
+    top: 50%;
+    left: 25%;
+    transform: translateY(-50%);
+    color: #fcf6ed;
+}
+
+.slide-content h2 {
+    font-size: 3rem;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    color: #fcf6ed; /* Tu verde deportivo */
+}
+
+.btn-shop {
+    display: inline-block;
+    padding: 12px 25px;
+    background-color:#fcf6ed;
+    color: #21632a;
+    text-decoration: none;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-top: 20px;
+    border-radius: 5px;
+    transition: 0.3s;
+}
+
+.btn-shop:hover {
+    background-color: #21632a;
+    color: #fff;
+    transform: scale(1.05);
+}
+
+/* Flechas */
+.prev, .next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0,0,0,0.5);
+    color: #fcf6ed;
+    padding: 15px;
+    border: none;
+    cursor: pointer;
+    font-size: 20px;
+    transition: 0.3s;
+}
+
+.prev { left: 0; border-radius: 0 5px 5px 0; }
+.next { right: 0; border-radius: 5px 0 0 5px; }
+
+.prev:hover, .next:hover {
+    color: #21632a;
+}
+
+/* Puntos */
+.dots-container {
+    text-align: center;
+    position: absolute;
+    bottom: 20px;
+    width: 100%;
+    z-index: 10; /* Asegura que estén por encima de la imagen */
+}
+
+.dot {
+    height: 14px; /* Un pelín más grandes para que se vean mejor */
+    width: 14px;
+    margin: 0 6px;
+    background-color: rgba(255, 255, 255, 0.5); /* Blanco semi-transparente cuando no están activos */
+    border: 2px solid #fff; /* Borde sólido para que no se pierdan */
+    border-radius: 50%;
+    display: inline-block;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    opacity: 1 !important; /* Forzamos que no sean transparentes por herencia */
+}
+
+.dot.active {
+    background-color: #21632a; /* Usamos el verde brillante que definimos al principio */
+    border-color: #21632a;
+    transform: scale(1.2); /* Crece un poquito el punto activo para que se note el cambio */
+    box-shadow: 0 0 10px rgba(7, 119, 35, 0.6); /* Un pequeño resplandor tipo "neón" deportivo */
+}
+
+.dot:hover {
+    background-color: #21632a; /* Se iluminan al pasar el mouse */
+}
+/* Animación de fundido */
+@keyframes fade {
+    from { opacity: 0.4; }
+    to { opacity: 1; }
+}
+
+/* Contenedor Principal de los servicios*/
+.servicios-container {
+    display: flex;
+    flex-wrap: wrap; /* Para que bajen si no caben */
+    justify-content: center;
+    gap: 20px;
+    padding: 40px 5%;
+}
+
+/* Tarjeta Individual */
+.servicio-card {
+    background-color: #fcf6ed; /* Un gris muy clarito para separar secciones */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    padding: 20px;
+    border-radius: 8px;
+    flex: 1; /* Todas miden lo mismo */
+    min-width: 250px; /* Evita que se compriman demasiado */
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-bottom: 3px solid transparent;
+}
+
+.servicio-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+    border-bottom: 3px solid #fcf6ed; /* El verde de tu marca */
+}
+
+/* Iconos */
+.servicio-card i {
+    font-size: 2rem;
+    color: #21632a;
+    width: 50px;
+    text-align: center;
+}
+
+/* Textos */
+.servicio-info h3 {
+    font-size: 1rem;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+    color: #21632a;
+}
+
+.servicio-info p {
+    font-size: 0.85rem;
+    color: #666;
+    margin: 0;
+}
