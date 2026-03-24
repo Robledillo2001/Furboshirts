@@ -25,7 +25,7 @@
         </div>
 
         <div class="enlace">
-            <a href="index.php?action=CambiarFoto">
+            <a href="index.php?action=CambiarIMGPerfil">
                 <h3>Cambiar Foto de Perfil</h3>
             </a>
         </div>

@@ -7,30 +7,47 @@
             $this->db=Conexion::conexion();   
         }
 
-        public function editarPerfil($id_usuario,$nombreUser,$correo,$passwd){//Metodo para cambiar datos del Usuario
+        public function editarPerfil($id_usuario,$nombre,$apellidos,$nombreUser,$correo,$passwd){//Metodo para cambiar datos del Usuario
             try{
                 $this->db->beginTransaction();
+
+                if(!empty($nombre)){
+                    $sql="UPDATE usuarios SET NOMBRE=:nombre WHERE ID_USUARIO=:id_usuario";
+                    $stmt=$this->db->prepare($sql);
+                    $stmt->bindParam(":nombre", $nombre, PDO::PARAM_STR);
+                    $stmt->bindParam(":id_usuario", $id_usuario, PDO::PARAM_INT);
+                    $stmt->execute();
+                }
+
+                if(!empty($apellidos)){
+                    $sql="UPDATE usuarios SET APELLIDOs=:apellidos WHERE ID_USUARIO=:id_usuario";
+                    $stmt=$this->db->prepare($sql);
+                    $stmt->bindParam(":apellidos", $apellidos, PDO::PARAM_STR);
+                    $stmt->bindParam(":id_usuario", $id_usuario, PDO::PARAM_INT);
+                    $stmt->execute();
+                }
+
                 if(!empty($nombreUser)){
                     $sql="UPDATE usuarios SET NOMBRE_USUARIO=:nombreUser WHERE ID_USUARIO=:id_usuario";
                     $stmt=$this->db->prepare($sql);
-                    $stmt->bindParam("nombreUser",$nombreUser,PDO::PARAM_STR);
-                    $stmt->bindParam("id_usuario",$id_usuario,PDO::PARAM_INT);
+                    $stmt->bindParam(":nombreUser",$nombreUser,PDO::PARAM_STR);
+                    $stmt->bindParam(":id_usuario",$id_usuario,PDO::PARAM_INT);
                     $stmt->execute();
                 }
 
                 if(!empty($correo)){
                     $sql="UPDATE usuarios SET CORREO=:correo WHERE ID_USUARIO=:id_usuario";
                     $stmt=$this->db->prepare($sql);
-                    $stmt->bindParam("correo",$correo,PDO::PARAM_STR);
-                    $stmt->bindParam("id_usuario",$id_usuario,PDO::PARAM_INT);
+                    $stmt->bindParam(":correo",$correo,PDO::PARAM_STR);
+                    $stmt->bindParam(":id_usuario",$id_usuario,PDO::PARAM_INT);
                     $stmt->execute();
                 }
 
                 if(!empty($passwd)){
                     $sql="UPDATE usuarios SET PASSWD=:passwd WHERE ID_USUARIO=:id_usuario";
                     $stmt=$this->db->prepare($sql);
-                    $stmt->bindParam("passwd",$passwd,PDO::PARAM_STR);
-                    $stmt->bindParam("id_usuario",$id_usuario,PDO::PARAM_INT);
+                    $stmt->bindParam(":passwd",$passwd,PDO::PARAM_STR);
+                    $stmt->bindParam(":id_usuario",$id_usuario,PDO::PARAM_INT);
                     $stmt->execute();
                 }
                 $this->db->commit();
@@ -43,9 +60,16 @@
             }
         }
 
-        public function cambiarIMGPerfil(){//Metodo para cambiar la imagen del Usuario
+        public function cambiarIMGPerfil($id_usuario,$imagen){//Metodo para cambiar la imagen del Usuario
             try{
                 $this->db->beginTransaction();
+                $sql="UPDATE usuarios SET IMAGEN_USER=:imagen WHERE ID_USUARIO=:id_usuario";
+                $stmt=$this->db->prepare($sql);
+                $stmt->bindParam(":imagen",$imagen,PDO::PARAM_STR);
+                $stmt->bindParam(":id_usuario",$id_usuario,PDO::PARAM_INT);
+                $stmt->execute();
+                $this->db->commit();
+                return "Imagen de perfil cambiada exitosamente";
             }catch(PDOException $e){
                 if($this->db->inTransaction()){
                     $this->db->rollBack();

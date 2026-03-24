@@ -106,6 +106,8 @@
         public function EditarPerfil(){
             if($_SERVER['REQUEST_METHOD']=='POST'){
                 $id=$_SESSION['id'];
+                $nombre=$_POST['nombre']??"";
+                $apellidos=$_POST['apellidos']??"";
                 $nombreUser=$_POST['nombreUser'] ?? "";
                 $correo=$_POST['correo'] ?? "";
                 $passwd=$_POST['passwd']?? "";
@@ -122,12 +124,47 @@
                         exit();
                     }
                 }
-                $modelo->editarPerfil($id,$nombreUser,$correo,$passwdHash);
+                $modelo->editarPerfil($id,$nombre,$apellidos,$nombreUser,$correo,$passwdHash);
 
                 header("Location: index.php?action=configuracion&success=1");
                 exit();
             }
             require_once "vista/usuarios/EditarPerfil.php";
+        }
+
+        public function CambiarIMgPerfil(){
+            if($_SERVER['REQUEST_METHOD']=='POST'){
+                 if (isset($_FILES['imagen']) && $_FILES['imagen']['error'] === UPLOAD_ERR_OK){
+                    $id=$_SESSION['id'];
+                    $nombreImg=$_FILES['imagen']['name'];
+
+                    $rutaTemporal = $_FILES['imagen']['tmp_name'];
+                    
+                    // Creamos la ruta
+                    $carpetaDestino = "assets/img/users/";
+                    // Si la carpeta no existe, la creamos
+                    if (!file_exists($carpetaDestino)) {
+                        mkdir($carpetaDestino, 0777, true);
+                    }
+
+                    $rutaFinal = $carpetaDestino . time() . "_" . $nombreImg;
+
+                    if (move_uploaded_file($rutaTemporal, $rutaFinal)) {
+                        $modelo = new Usuarios();
+                        $modelo->CambiarIMgPerfil($id,$rutaFinal);
+                        $_SESSION['IMAGEN']=$rutaFinal;
+                        header("Location: index.php?action=configuracion&success=1");
+                        exit();
+                    } else {
+                        header("Location: index.php?action=configuracion&error=pass");
+                        exit();
+                    }
+                } else {
+                    header("Location: index.php?action=configuracion&error=pass");
+                    exit();
+                }
+            }
+            require_once "vista/usuarios/CambiarIMGPerfil.php";
         }
 
         public function login(){
