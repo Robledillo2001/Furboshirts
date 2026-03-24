@@ -18,7 +18,7 @@ include __DIR__ . '/../header.php';
 
             <div class="input-group">
                 <label for="correo">Correo</label>
-                <input type="correo" name="correo" id="correo" required>
+                <input type="email" name="correo" id="correo" required>
             </div>
 
             <div class="input-group">

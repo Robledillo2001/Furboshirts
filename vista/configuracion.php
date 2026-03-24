@@ -1,4 +1,16 @@
-<?php include __DIR__ . '/header.php'; ?> 
+<?php include __DIR__ . '/header.php'; ?>
+
+<?php if (isset($_GET['success'])): ?>
+    <div style="background-color: #d4edda; color: #155724; padding: 10px; border-radius: 5px; margin-bottom: 15px; border: 1px solid #c3e6cb;">
+        ✅ Datos actualizados correctamente.
+    </div>
+<?php endif; ?>
+
+<?php if (isset($_GET['error']) && $_GET['error'] == 'pass'): ?>
+    <div style="background-color: #f8d7da; color: #721c24; padding: 10px; border-radius: 5px; margin-bottom: 15px; border: 1px solid #f5c6cb;">
+        ❌ Las contraseñas no coinciden. Inténtalo de nuevo.
+    </div>
+<?php endif; ?>
 
 <div class="container">
     <h1>CONFIGURACIÓN DE CUENTA</h1>

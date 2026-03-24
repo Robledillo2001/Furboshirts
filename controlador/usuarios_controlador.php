@@ -103,6 +103,33 @@
             }
         }
 
+        public function EditarPerfil(){
+            if($_SERVER['REQUEST_METHOD']=='POST'){
+                $id=$_SESSION['id'];
+                $nombreUser=$_POST['nombreUser'] ?? "";
+                $correo=$_POST['correo'] ?? "";
+                $passwd=$_POST['passwd']?? "";
+                $passwd2=$_POST['passwd2'] ?? "";
+                $passwdHash="";
+
+                $modelo=new Usuarios();
+
+                if(!empty($passwd)&&!empty($passwd2)){
+                    if($passwd===$passwd2){
+                        $passwdHash=password_hash($passwd,PASSWORD_DEFAULT) ?? "";
+                    }else{
+                        header("Location: index.php?action=configuracion&error=pass");
+                        exit();
+                    }
+                }
+                $modelo->editarPerfil($id,$nombreUser,$correo,$passwdHash);
+
+                header("Location: index.php?action=configuracion&success=1");
+                exit();
+            }
+            require_once "vista/usuarios/EditarPerfil.php";
+        }
+
         public function login(){
             if($_SERVER['REQUEST_METHOD'] == 'POST'){
                 $usuarioInput = $_POST['usuario'];
