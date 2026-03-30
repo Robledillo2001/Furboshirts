@@ -104,6 +104,7 @@
         }
 
         public function EditarPerfil(){
+            $this->checkAdmin();
             if($_SERVER['REQUEST_METHOD']=='POST'){
                 $id=$_SESSION['id'];
                 $nombre=$_POST['nombre']??"";
@@ -130,6 +131,28 @@
                 exit();
             }
             require_once "vista/usuarios/EditarPerfil.php";
+        }
+
+        public function EditarUsuario(){//Metodo para editar Usuarios
+            $this->checkAdmin();
+            if($_SERVER['REQUEST_METHOD']=='POST' && isset($_GET['id'])){
+                $id=$_GET['id'];
+                $rol=$_POST['rol']?? "";
+                $origen = $_GET['from']?? '';//Origen segun el tipo de usuario al que se le quiera cabiar el rol
+
+                $modelo=new Usuarios();
+
+                $modelo->editarUsuarios($id,$rol);
+
+                // Redirección dinámica
+                if ($origen === 'GestionAdmin') {//Si se elimina el usuario desde GestionAdmin se redirigira a Gestion Admin
+                    header("Location: index.php?action=GestionAdmin");
+                } else {//Si no se redirigira a GestionEquipos
+                    header("Location: index.php?action=GestionClientes");
+                }
+                exit();
+            }
+            require_once "vista/usuarios/EditarUsuarios.php";
         }
 
         public function CambiarIMgPerfil(){

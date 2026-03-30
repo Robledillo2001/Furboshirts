@@ -208,7 +208,7 @@
                 }
                 die("Error en Añadir Admin: " . $e->getMessage());
             }
-        }
+        } 
 
         public function mostrarClientes($inicio, $cantidad) {
             try {
@@ -255,6 +255,29 @@
                     $this->db->rollBack();
                 }
                 die("Error al eliminar Usuarios: " . $e->getMessage());
+            }
+        }
+
+        public function editarUsuarios($id_usuario,$rol){//Metodo para editar usuarios
+            try{
+                $this->db->beginTransaction();
+
+                if(!empty($rol)){//Comprobamos que el rol esta vacio para actualizarlo
+                    $sql="UPDATE usuarios SET ROL=:rol WHERE ID_USUARIO=:id_usuario";
+                    $stmt=$this->db->prepare($sql);
+                    $stmt->bindParam(":rol", $rol, PDO::PARAM_STR);
+                    $stmt->bindParam(":id_usuario", $id_usuario, PDO::PARAM_INT);
+                    $stmt->execute();
+                }
+
+                
+                $this->db->commit();
+                return "Datos cambiados exitosamente";
+            }catch(PDOException $e){
+                if($this->db->inTransaction()){
+                    $this->db->rollBack();
+                }
+                die("Error al editar Perfil: ".$e->getMessage());
             }
         }
     }

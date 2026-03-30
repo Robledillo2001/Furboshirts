@@ -132,7 +132,7 @@
         public function eliminarStock($id_producto, $id_talla){//Metodo para eliminar Productos Mediante ID
             try{
                 $this->db->beginTransaction();//Empezamos una transaccion para asegurar que todo se guarde
-                
+                //Borramos las tallas asociadas a un producto
                 $sql="DELETE FROM productos_tallas 
                  WHERE ID_PRODUCTO=:id_producto
                  AND ID_TALLA=:id_talla";
@@ -142,8 +142,24 @@
                 $stmt->bindParam(":id_talla",$id_talla,PDO::PARAM_INT);//Parametro del ID de la talla del stock que queremos eliminar
 
                 $stmt->execute();
+
+                //Verificamos que ya no hay mas tallas disponibles de ese producto
+                $sql="SELECT COUNT(*) FROM productos_tallas WHERE ID_PRODUCTO = :id_producto";
+                $stmt=$this->db->prepare($sql);
+                $stmt->bindParam(":id_producto",$id_producto,PDO::PARAM_INT);
+                $stmt->execute();
+
+                $tallasRestantes=$stmt->fetchColumn();
+
+                if($tallasRestantes==0){//Si ya no hay tallas en los asociadas a un producto
+                    $sql="DELETE FROM productos WHERE ID_PRODUCTO=:id_producto";
+                    $stmt=$this->db->prepare($sql);
+                    $stmt->bindParam(":id_producto",$id_producto,PDO::PARAM_INT);
+                    $stmt->execute();
+                }
+
                 $this->db->commit();//Guarda los cambios en la BSD
-                return"Producto Eliminado";
+                return"Stock Eliminado";
             }catch(PDOException $e){
                if($this->db->inTransaction()){
                     $this->db->rollBack();//Se desacen los cambios
@@ -187,15 +203,107 @@
             }
         }
 
-        public function editarProductos($id){//Metodo para eliminar Producto Mediante ID
+        public function editarProductos($id, $nombre, $precio, $id_cat, $id_equipo,$año_edicion,$descripcion,$caracteristicas,$imagen1,$imagen2, $tallas = []){//Metodo para editar Producto Mediante ID
             try{
                 $this->db->beginTransaction();//Empezamos una transaccion para asegurar que todo se guarde
-                $sql="";
-                $stmt=$this->db->prepare($sql);
+                
+                if(!empty($nombre)){//Comprobamos que el nombre no este vacio
+                    $sql="UPDATE productos SET NOMBRE=:nombre WHERE ID_PRODUCTO=:id";
+                    $stmt=$this->db->prepare($sql);
+                    $stmt->execute([':nombre'=>$nombre,':id'=>$id]);
+                }
 
-                //$stmt->bindParam(":id_producto",$id_producto);
+                if(!empty($precio)){//Comprobamos que el precio no este vacio
+                    $sql="UPDATE productos SET PRECIO=:precio WHERE ID_PRODUCTO=:id";
+                    $stmt=$this->db->prepare($sql);
+                    $stmt->execute([':precio'=>$precio,':id'=>$id]);
+                }
 
-                $stmt->execute();
+                if(!empty($id_cat)){//Comprobamos que el id_categoria no este vacio
+                    $sql="UPDATE productos SET ID_CAT=:id_cat WHERE ID_PRODUCTO=:id";
+                    $stmt=$this->db->prepare($sql);
+                    $stmt->execute([':id_cat'=>$id_cat,':id'=>$id]);
+                }
+
+                if(!empty($id_equipo)){//Comprobamos que el id_equipo no este vacio
+                    $sql="UPDATE productos SET ID_EQUIPO=:id_equipo WHERE ID_PRODUCTO=:id";
+                    $stmt=$this->db->prepare($sql);
+                    $stmt->execute([':id_equipo'=>$id_equipo,':id'=>$id]);
+                }
+
+                if(!empty($año_edicion)){//Comprobamos que el id_equipo no este vacio
+                    $sql="UPDATE productos SET AÑO_EDICION=:anio_edicion WHERE ID_PRODUCTO=:id";
+                    $stmt=$this->db->prepare($sql);
+                    $stmt->execute([':anio_edicion'=>$año_edicion,':id'=>$id]);
+                }
+
+                if(!empty($descripcion)){//Comprobamos que el id_equipo no este vacio
+                    $sql="UPDATE productos SET DESCRIPCION=:descripcion WHERE ID_PRODUCTO=:id";
+                    $stmt=$this->db->prepare($sql);
+                    $stmt->execute([':descripcion'=>$descripcion,':id'=>$id]);
+                }
+
+                if(!empty($caracteristicas)){//Comprobamos que el id_equipo no este vacio
+                    $sql="UPDATE productos SET CARACTERISTICAS=:caracteristicas WHERE ID_PRODUCTO=:id";
+                    $stmt=$this->db->prepare($sql);
+                    $stmt->execute([':caracteristicas'=>$caracteristicas,':id'=>$id]);
+                }
+
+                // Actualizar TALLAS
+                if (!empty($tallas)) {
+                    foreach ($tallas as $id_talla => $cantidad) {
+                        $cantidad = (int)$cantidad; // Aseguramos que sea un número entero
+
+                        // FILTRO CRÍTICO: Solo procedemos si la cantidad es mayor a 0
+                        if ($cantidad > 0) {
+                            
+                            // 1. Verificamos si ya existe esta talla para este producto
+                            $sql = "SELECT COUNT(*) FROM productos_tallas WHERE ID_PRODUCTO = :id_prod AND ID_TALLA = :id_talla";
+                            $stmt = $this->db->prepare($sql);
+                            $stmt->execute([':id_prod' => $id, ':id_talla' => $id_talla]);
+                            $existe = $stmt->fetchColumn();
+
+                            if ($existe > 0) {
+                                // Si existe y la cantidad es > 0, actualizamos el stock
+                                $sql = "UPDATE productos_tallas SET STOCK_ESPECIFICO = :stock
+                                        WHERE ID_PRODUCTO = :id_prod AND ID_TALLA = :id_talla";
+                                $this->db->prepare($sql)->execute([
+                                    ':stock' => $cantidad,
+                                    ':id_prod' => $id,
+                                    ':id_talla' => $id_talla
+                                ]);
+                            } else {
+                                // Si no existe y la cantidad es > 0, insertamos el nuevo registro
+                                $sql = "INSERT INTO productos_tallas (ID_PRODUCTO, ID_TALLA, STOCK_ESPECIFICO) 
+                                        VALUES (:id_prod, :id_talla, :stock)";
+                                $this->db->prepare($sql)->execute([
+                                    ':id_prod' => $id,
+                                    ':id_talla' => $id_talla,
+                                    ':stock' => $cantidad
+                                ]);
+                            }
+                        }
+                        // Si $cantidad es 0 o menor, el bucle salta a la siguiente talla sin hacer nada
+                    }
+                }
+
+                if(!empty($imagen1) || !empty($imagen2)){//Si las imagenes que se pasaron no estan vacias
+                    $sql="DELETE FROM imagenes WHERE ID_PRODUCTO=:id";//Se borraran las imagenes de la tabla imagenes
+                    $stmt=$this->db->prepare($sql);
+                    $stmt->execute([':id'=>$id]);
+
+                    if(!empty($imagen1)){//Y se insertaran imagenes segun si solo se inserta una
+                        $sql = "INSERT INTO imagenes (RUTA, ID_PRODUCTO) VALUES (:ruta, :id_prod)";
+                        $this->db->prepare($sql)->execute([':ruta' => $imagen1, ':id_prod' => $id]);
+                    }
+
+                    if(!empty($imagen2)){//O se insertan varias
+                        $sql = "INSERT INTO imagenes (RUTA, ID_PRODUCTO) VALUES (:ruta, :id_prod)";
+                        $this->db->prepare($sql)->execute([':ruta' => $imagen2, ':id_prod' => $id]);
+                    }
+                
+                }
+
                 $this->db->commit();//Guarda los cambios en la BSD
                 return"Producto Actualizado";
             }catch(PDOException $e){
@@ -205,6 +313,7 @@
                 die("Error al Actualizar Producto".$e->getMessage());
             }
         }
+
         //Administracion de las Categorias
         public function ListarCategorias($inicio, $cantidad){//Consulta para mostrar las categorias
             try{
@@ -306,6 +415,33 @@
                 die("Error al eliminar categoría: " . $e->getMessage());
             }
         }
+
+        public function editarCategoria($id_cat,$prenda,$descripcion){//Metodo para editar categoria
+            try{
+                $this->db->beginTransaction();
+                
+                if(!empty($prenda)){
+                    $sql="UPDATE categorias SET PRENDA=:prenda WHERE ID_CAT=:id_cat";
+                    $stmt=$this->db->prepare($sql);
+                    $stmt->execute([":prenda"=>$prenda,":id_cat"=>$id_cat]);
+                }
+
+                if(!empty($descripcion)){
+                    $sql="UPDATE categorias SET DESCRIPCION=:descripcion WHERE ID_CAT=:id_cat";
+                    $stmt=$this->db->prepare($sql);
+                    $stmt->execute([":descripcion"=>$descripcion,":id_cat"=>$id_cat]);
+                }
+
+                $this->db->commit();
+                return "Categoria actualizada";
+            }catch(PDOException $e){
+                if($this->db->inTransaction()){
+                    $this->db->rollBack();
+                }
+                die("Error al editar categoria: ".$e->getMessage());
+            }
+        }
+
         //Administracion de los Deportes
         public function añadirDeportes($nombre_deporte){//Metodo para añadir Deportes
             try{
@@ -455,13 +591,41 @@
                 die("Error al eliminar la entidad: " . $e->getMessage());
             }
         }
+
+        public function editarED($id_equipo,$nombre_equipo,$escudo,$tipo){//Metodo para editar la entidad del equipo
+            try{
+                $this->db->beginTransaction();
+                if(!empty($nombre_equipo)){
+                    $sql="UPDATE entidad_deportiva SET NOMBRE_EQUIPO=:nombre WHERE ID_EQUIPO=:id_equipo";
+                    $stmt=$this->db->prepare($sql);
+                    $stmt->execute([":nombre"=>$nombre_equipo,":id_equipo"=>$id_equipo]);
+                }
+
+                if(!empty($escudo)){
+                    $sql="UPDATE entidad_deportiva SET ESCUDO=:escudo WHERE ID_EQUIPO=:id_equipo";
+                    $stmt=$this->db->prepare($sql);
+                    $stmt->execute([":escudo"=>$escudo,":id_equipo"=>$id_equipo]);
+                }
+
+                if(!empty($tipo)){
+                    $sql="UPDATE entidad_deportiva SET TIPO=:tipo WHERE ID_EQUIPO=:id_equipo";
+                    $stmt=$this->db->prepare($sql);
+                    $stmt->execute([":tipo"=>$tipo,":id_equipo"=>$id_equipo]);
+                }
+
+                $this->db->commit();
+            }catch(PDOException $e){
+                if($this->db->inTransaction()){
+                    $this->db->rollBack();
+                }
+                die("Error al eliminar entidad deportiva".$e->getMessage());
+            }
+        }
+
         //Administracion de los Logos y Competiciones
-
-
-
         public function ListarTemporadas($inicio, $cantidad){//Consulta Conjunta de las tablas de competiciones, logos y competiciones_parches
             try{
-                $sql = "SELECT c.NOMBRE_COMP,e.NOMBRE_EQUIPO, p.PARCHE, t.PARCHE_ESPECIAL, c.TIPO_COMP, t.AÑO_EDICION 
+                $sql = "SELECT c.ID_COMP,c.NOMBRE_COMP,e.ID_EQUIPO,e.NOMBRE_EQUIPO,p.ID_LOGO,p.PARCHE, t.PARCHE_ESPECIAL, c.TIPO_COMP, t.AÑO_EDICION 
                     FROM competiciones c 
                     INNER JOIN temporadas t ON c.ID_COMP = t.ID_COMP 
                     INNER JOIN parches p ON t.ID_LOGO = p.ID_LOGO
@@ -589,6 +753,49 @@
             }
         }
 
+        public function editarTemporada($id_comp,$id_logo,$id_equipo,$anio_edicion){//Metodo para editar el año de la edicion de la temporada
+            try{
+                $this->db->beginTransaction();
+                
+
+                $sql="UPDATE temporadas SET AÑO_EDICION=:anio_edicion 
+                WHERE ID_COMP=:id_comp AND ID_LOGO=:id_logo AND id_equipo=:id_equipo";
+
+                $stmt=$this->db->prepare($sql);
+                $stmt->execute([":anio_edicion"=>$anio_edicion,":id_comp"=>$id_comp,":id_logo"=>$id_logo,"id_equipo"=>$id_equipo]);
+
+                $this->db->commit();
+                return "Temporada Actualizada";
+            }catch(PDOException $e){
+                if($this->db->inTransaction()){
+                    $this->db->rollBack();
+                }
+                die("Error al eliminar temporada: ".$e->getMessage());
+            }
+        }
+
+        public function eliminarTemporada($id_comp,$id_logo,$id_equipo){//Metodo para eliminar una temporada
+            try{
+                $this->db->beginTransaction();
+                $sql="DELETE FROM temporadas WHERE ID_COMP=:id_comp AND ID_LOGO=:id_logo AND ID_EQUIPO=:id_equipo";
+                $stmt=$this->db->prepare($sql);
+
+                $stmt->bindParam(":id_comp",$id_comp,PDO::PARAM_INT);
+                $stmt->bindParam(":id_logo",$id_logo,PDO::PARAM_INT);
+                $stmt->bindParam(":id_equipo",$id_equipo,PDO::PARAM_INT);
+
+                $stmt->execute();
+
+                $this->db->commit();
+                return "Temporada eliminada";
+            }catch(PDOException $e){
+                if($this->db->inTransaction()){
+                    $this->db->rollBack();
+                }
+                die("Error al eliminar temporada: ".$e->getMessage());
+            }
+        }
+
         //Administracion de las Tallas
         public function ListarTallas($inicio, $cantidad){//Muestra las tallas que hay
             try{
@@ -645,6 +852,25 @@
                 die("Error al eliminar talla: " . $e->getMessage());
             }
         }
+
+        public function editarTalla($id_talla,$talla){//Metodo para editar el nombre de una talla
+            try{
+                $this->db->beginTransaction();
+                if(!empty($talla)){
+                    $sql="UPDATE tallas SET TALLA=:talla WHERE ID_TALLA=:id_talla";
+                    $stmt=$this->db->prepare($sql);
+                    $stmt->execute([":id_talla"=>$id_talla,":talla"=>$talla]);
+                }
+                $this->db->commit();
+                return "Talla Actualizada";
+            }catch(PDOException $e){
+                if($this->db->inTransaction()){
+                    $this->db->rollBack();
+                }
+                die("Error al actualizar la talla: ".$e->getMessage());
+            }
+        }
+
         //Administracion de los Pedidos
         public function ListarPedidos($inicio, $cantidad){//Muestra todos los pedidos de los usuarios
             try{

@@ -50,7 +50,7 @@
                             <td><?= $user['CORREO'] ?></td>
                             <td><strong><?= $user['NOMBRE_USUARIO'] ?></strong></td>
                             <td class="acciones">
-                                <a href="?action=editaUsuarior&id=<?= $user['ID_USUARIO'] ?>&from=GestionAdmin" class="btn-icon edit"><i class="fas fa-edit"></i></a>
+                                <a href="?action=EditarUsuario&id=<?= $user['ID_USUARIO'] ?>&from=GestionAdmin" class="btn-icon edit"><i class="fas fa-edit"></i></a>
                                 <a href="?action=EliminarUsuario&id=<?= $user['ID_USUARIO'] ?>&from=GestionAdmin" class="btn-icon delete" onclick="return confirm('¿Estás seguro?')"><i class="fas fa-trash"></i></a>
                             </td>
                         </tr>

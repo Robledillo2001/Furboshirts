@@ -57,7 +57,7 @@
                                 <td><?= $t['ID_TALLA'] ?></td>
                                 <td><?= htmlspecialchars($t['TALLA']) ?></td>
                                 <td>
-                                    <a href="index.php?action=EditarTalla&id=<?= $t['ID_TALLA'] ?>" class="btn-icon edit"><i class="fas fa-edit"></i></a>
+                                    <a href="index.php?action=EditarTallas&id=<?= $t['ID_TALLA'] ?>" class="btn-icon edit"><i class="fas fa-edit"></i></a>
                                     <a href="index.php?action=EliminarTalla&id=<?= $t['ID_TALLA'] ?>" class="btn-icon delete" onclick="return confirm('¿Eliminar esta talla?')"><i class="fas fa-trash"></i></a>
                                 </td>
                             </tr>

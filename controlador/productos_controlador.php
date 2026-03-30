@@ -76,8 +76,7 @@
                 }
             }
 
-            // CARGA DE DATOS PARA LA VISTA (GET)
-            // Necesitas estos métodos en tus modelos para llenar los select del formulario
+            // Métodos del modelo para llenar los select del formulario
             $categorias = $modelo->obtenerCategorias(); // SELECT * FROM categorias
             $equipos = $modelo->obtenerEquipos();      // SELECT * FROM entidad_deportiva
             $tallas = $modelo->obtenerTallas();
@@ -97,6 +96,50 @@
                 header('Location: index.php?action=GestionProductos');
                 exit();
             }
+        }
+
+        public function EditarProducto(){//Metodo para editar los productos
+            $this->checkAdmin();
+            $modelo=new Productos();
+
+            if($_SERVER['REQUEST_METHOD']=='POST'&&isset($_GET['id'])){
+                $id_producto=$_GET['id'];
+                $nombre=$_POST['nombre'];
+                $precio=$_POST['precio'];
+                $categoria=$_POST['categoria'];
+                $equipo=$_POST['equipo'];
+                $año_edicion=$_POST['anio'];
+                $descripcion=$_POST['desc'];
+                $caracteristicas=$_POST['caracteristicas'];
+
+                $imagen1 = "";
+                $imagen2 = "";
+
+                //Capturamos el array de tallas para añadirlo al stock
+                $tallas=isset($_POST['tallas'])?$_POST['tallas']:[];
+
+                if(isset($_FILES['imagen1'])&& $_FILES['imagen1']['error'] == 0){
+                    $nombreImg = time() . "_" . $_FILES['imagen1']['name'];
+                    $imagen1 = "assets/img/productos/" . $nombreImg;
+                    move_uploaded_file($_FILES['imagen1']['tmp_name'], $imagen1);
+                }
+
+                if(isset($_FILES['imagen2'])&& $_FILES['imagen2']['error'] == 0){
+                    $nombreImg = time() . "_" . $_FILES['imagen2']['name'];
+                    $imagen2 = "assets/img/productos/" . $nombreImg;
+                    move_uploaded_file($_FILES['imagen2']['tmp_name'], $imagen2);
+                }
+
+                $modelo->editarProductos($id_producto,$nombre,$precio,$categoria,$equipo,$año_edicion,$descripcion,$caracteristicas,$imagen1,$imagen2,$tallas);
+
+                header("Location: index.php?action=GestionProductos");
+                exit();
+            }
+            // Métodos del modelo para llenar los select del formulario
+            $categorias = $modelo->obtenerCategorias(); // SELECT * FROM categorias
+            $equipos = $modelo->obtenerEquipos();      // SELECT * FROM entidad_deportiva
+            $tallas = $modelo->obtenerTallas();        // SELECT * FROM tallas
+            require_once "vista/productos/EditarProductos.php";
         }
 
         public function GestionCategorias(){//Metodo para mostrar las categorias
@@ -135,7 +178,7 @@
 
                 $modelo->añadirCategoria($prenda,$descripcion,$deporte);
 
-                header("Location: index.php?action=GestionCategorias");//Redirige a la gestion de categorias
+                header("Location: index.php?action=GestionCategorias");//Rerige a la gestion de categorias
                 exit();//Finaliza la ejecucion del script para que ocurra la redireccion
             }
             require_once("vista/productos/AnadirCategorias.php");
@@ -153,9 +196,25 @@
                 $modelo->eliminarCategoria($id);
 
                 // Redirigimos a la tabla de tallas con un mensaje (opcional)
-                header("Location: index.php?action=GestionCategorias&mensaje=eliminado");
+                header("Location: index.php?action=GestionCategorias");
                 exit();
             }
+        }
+
+        public function EditarCategoria(){//Metodo para editar categorias
+            $this->checkAdmin();
+            $modelo=new Productos();
+            if(isset($_GET['id'])&&$_SERVER['REQUEST_METHOD']=='POST'){//Sacamos los datos del id de la categoria a actualizar y los datos del form
+                $id_categoria=$_GET['id'];
+                $prenda=$_POST['prenda'];
+                $descripcion=$_POST['desc'];
+
+                $modelo->editarCategoria($id_categoria,$prenda,$descripcion);
+                header("Location: index.php?action=GestionCategorias");
+                exit();
+            }
+
+            require_once "vista/productos/EditarCategorias.php";
         }
 
         public function anadirDeporte(){//Metodo para añadir Deporte
@@ -314,6 +373,44 @@
             }
         }
 
+        public function EditarED() {
+            $this->checkAdmin();
+            $modelo = new Productos();
+
+            if (isset($_GET['id']) && $_SERVER['REQUEST_METHOD'] === 'POST') {
+                $id_equipo = $_GET['id'];
+                $origen = $_GET['from'] ?? 'GestionCategorias'; // Valor por defecto
+                
+                $nombre = $_POST['nombre_equipo'];
+                $tipo = $_POST['tipo'];
+                $rutaFinal = null; // Por defecto no hay imagen nueva
+
+                // 1. Verificar si se subió una imagen nueva sin errores
+                if (isset($_FILES['imagen']) && $_FILES['imagen']['error'] === UPLOAD_ERR_OK) {
+                    $escudo = $_FILES['imagen']['name'];
+                    $rutaTemporal = $_FILES['imagen']['tmp_name'];
+                    $carpetaDestino = "assets/img/equipos/";
+
+                    if (!file_exists($carpetaDestino)) {
+                        mkdir($carpetaDestino, 0777, true);
+                    }
+
+                    $rutaFinal = $carpetaDestino . time() . "_" . $escudo;
+
+                    if (!move_uploaded_file($rutaTemporal, $rutaFinal)) {
+                        die("Error: No se pudo mover el archivo.");
+                    }
+                }
+               
+                $modelo->editarED($id_equipo, $nombre, $rutaFinal, $tipo);//Llamar al modelo para editar
+
+                header("Location: index.php?action=$origen");
+                exit();
+            }
+
+            require_once "vista/productos/EditarED.php";
+        }
+
         public function GestionTemporadas(){//Metodo para gestionar Temporadas
             $this->checkAdmin();
 
@@ -438,6 +535,47 @@
             require_once "vista/productos/AsignarEquipos.php";
         }
 
+        public function EliminarTemporada(){//Eliminar Temporada
+        $this->checkAdmin();
+            if(isset($_GET['id_comp'], $_GET['id_logo'], $_GET['id_equipo'])){
+                $id_comp = (int)$_GET['id_comp']; // Forzamos a entero por seguridad
+                $id_logo = (int)$_GET['id_logo']; 
+                $id_equipo=(int)$_GET['id_equipo'];
+
+                $modelo = new Productos();
+                
+                //Llamamos al método del modelo
+                $modelo->eliminarTemporada($id_comp,$id_logo,$id_equipo);
+
+                // Redirigimos a la tabla de tallas con un mensaje (opcional)
+                header("Location: index.php?action=GestionTemporadas");
+                exit();
+            }
+        }
+
+       public function EditarTemporada(){
+            $this->checkAdmin();
+            $modelo = new Productos();
+
+            // Verificamos si vienen los datos necesarios
+            if(isset($_GET['id_comp'], $_GET['id_logo'], $_GET['id_equipo']) && isset($_POST['anio_edicion'])){
+                
+                $id_comp = (int)$_GET['id_comp'];
+                $id_logo = (int)$_GET['id_logo']; 
+                $id_equipo = (int)$_GET['id_equipo'];
+                $año_edicion = (int)$_POST['anio_edicion'];
+
+                $modelo->editarTemporada($id_comp, $id_logo, $id_equipo, $año_edicion);
+                
+                // Redirigir y CORTAR la ejecución
+                header("Location: index.php?action=GestionTemporadas");
+                exit(); 
+            }
+
+            // Si no entró al IF, cargamos la vista
+            require_once "vista/productos/EditarTemporada.php";
+        }
+
         public function GestionTallas(){//Metodo para ver Tallas
             $this->checkAdmin();
 
@@ -490,6 +628,21 @@
                 header("Location: index.php?action=GestionTallas");
                 exit();
             }
+        }
+
+        public function EditarTallas(){//Metodo para añadir tallas
+            $this->checkAdmin();
+            $modelo=new Productos();
+            if(isset($_GET['id'])&&$_SERVER['REQUEST_METHOD']=='POST'){//Sacamos los datos del id de la categoria a actualizar y los datos del form
+                $id_talla=$_GET['id'];
+                $talla=$_POST['talla'];
+
+                $modelo->editarTalla($id_talla,$talla);
+                header("Location: index.php?action=GestionTallas");
+                exit();
+            }
+
+            require_once "vista/productos/EditarTallas.php";
         }
 
         public function GestionPedidos(){

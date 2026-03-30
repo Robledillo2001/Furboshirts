@@ -59,23 +59,23 @@
                     <?php 
                     // Usamos la variable que definiste en el controlador para esta sección
                     if (!empty($temporadasPag)): ?>
-                        <?php foreach ($temporadasPag as $c): ?>
+                        <?php foreach ($temporadasPag as $t): ?>
                             <tr>
-                                <td><strong><?= htmlspecialchars($c['NOMBRE_EQUIPO']) ?></strong></td>
-                                <td><strong><?= htmlspecialchars($c['NOMBRE_COMP']) ?></strong></td>
-                                <td><img src="<?= htmlspecialchars($c['PARCHE']) ?>" alt=""></td>
+                                <td><strong><?= htmlspecialchars($t['NOMBRE_EQUIPO']) ?></strong></td>
+                                <td><strong><?= htmlspecialchars($t['NOMBRE_COMP']) ?></strong></td>
+                                <td><img src="<?= htmlspecialchars($t['PARCHE']) ?>" alt=""></td>
                                 <td>
-                                    <?php if (!empty($c['PARCHE_ESPECIAL'])): ?>
-                                        <img src="<?= htmlspecialchars($c['PARCHE_ESPECIAL']) ?>" alt="Parche Especial" style="width: 50px;">
+                                    <?php if (!empty($t['PARCHE_ESPECIAL'])): ?>
+                                        <img src="<?= htmlspecialchars($t['PARCHE_ESPECIAL']) ?>" alt="Parche Especial" style="width: 50px;">
                                     <?php else: ?>
                                         <span style="color: #888; font-style: italic;">Sin parche especial</span>
                                     <?php endif; ?>
                                 </td>
-                                <td><span class="badge"><?= htmlspecialchars($c['TIPO_COMP']) ?></span></td>
-                                <td><?= htmlspecialchars($c['AÑO_EDICION']) ?></td>
+                                <td><span class="badge"><?= htmlspecialchars($t['TIPO_COMP']) ?></span></td>
+                                <td><?= htmlspecialchars($t['AÑO_EDICION']) ?></td>
                                 <td>
-                                    <a href="#" class="btn-icon edit"><i class="fas fa-edit"></i></a>
-                                    <a href="#" class="btn-icon delete" onclick="return confirm('¿Eliminar esta relación?')"><i class="fas fa-trash"></i></a>
+                                    <a href="index.php?action=EditarTemporada&id_comp=<?=$t['ID_COMP']?>&id_logo=<?=$t['ID_LOGO']?>&id_equipo=<?=$t['ID_EQUIPO']?>" class="btn-icon edit"><i class="fas fa-edit"></i></a>
+                                    <a href="index.php?action=EliminarTemporada&id_comp=<?=$t['ID_COMP']?>&id_logo=<?=$t['ID_LOGO']?>&id_equipo=<?=$t['ID_EQUIPO']?>" class="btn-icon delete" onclick="return confirm('¿Eliminar esta Temporada?')"><i class="fas fa-trash"></i></a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
