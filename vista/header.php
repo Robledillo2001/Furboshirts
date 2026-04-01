@@ -19,6 +19,7 @@
     <link rel="stylesheet" href="assets/estilos/registro.css">
     <link rel="stylesheet" href="assets/estilos/Tienda.css">
     <link rel="stylesheet" href="assets/estilos/paginacion.css">
+    <link rel="stylesheet" href="assets/estilos/catalogo.css">
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
@@ -48,7 +49,7 @@
                     <a href="index.php?action=inicio">INICIO</a>
                 </div>
                 <div class="nav-a">
-                    <a href="index.php?action=Productos">PRODUCTOS</a> 
+                    <a href="index.php?action=mostrarCatalogo">PRODUCTOS</a> 
                 </div>
             <?php endif; ?>
         </nav>

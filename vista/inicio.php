@@ -9,7 +9,7 @@
             <div class="slide-content">
                 <h2>Temporada 2026</h2>
                 <p>Las mejores camisetas de todos los equipos y competiciones disponibles</p>
-                <a href="#" class="btn-shop">Explorar</a>
+                <a href="index.php?action=mostrarCatalogo" class="btn-shop">Explorar</a>
             </div>
         </div>
 
@@ -18,7 +18,7 @@
             <div class="slide-content">
                 <h2>Orgullo Nacional</h2>
                 <p>Equípate para el próximo mundial con tu selección.</p>
-                <a href="#" class="btn-shop">Explorar</a>
+                <a href="index.php?action=mostrarCatalogo&tipo=Seleccion" class="btn-shop">Explorar</a>
             </div>
         </div>
 
@@ -27,7 +27,7 @@
             <div class="slide-content">
                 <h2>Personalizacion</h2>
                 <p>Personaliza tus camisetas favoritas con nombre y dorsales y el parche de competicion a elección.</p>
-                <a href="#" class="btn-shop">Explorar</a>
+                <a href="index.php?action=mostrarCatalogo&tipo=Equipo" class="btn-shop">Explorar</a>
             </div>
         </div>
 

@@ -19,6 +19,7 @@
 
    $controladores=[//Array con los controladores de que realiza cada accion
     "inicio"=>$cliente,
+    "mostrarCatalogo"=>$cliente,
     "GestionProductos"=>$productos,
     "AnadirProducto"=>$productos,
     "EditarProducto"=>$productos,

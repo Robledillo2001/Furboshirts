@@ -1,0 +1,183 @@
+/* La Tarjeta de Producto */
+.producto-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #eee;
+}
+
+.producto-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+/* Contenedor de la Imagen */
+.producto-imagen {
+    width: 100%;
+    height: 250px; /* Altura fija para que todas las tarjetas sean iguales */
+    background-color: #f9f9f9;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.producto-imagen img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Corta la imagen para rellenar el recuadro sin deformarse */
+    transition: transform 0.5s ease;
+}
+
+.producto-card:hover .producto-imagen img {
+    transform: scale(1.1); /* Efecto zoom suave al pasar el ratón */
+}
+
+/* Información del Producto */
+.producto-info {
+    padding: 20px;
+    text-align: center;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.producto-titulo {
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 10px;
+    font-weight: 600;
+    /* Limita a 2 líneas de texto */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.producto-precio {
+    font-size: 1.3rem;
+    color: #21632a; /* Tu verde oscuro corporativo */
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+/* Botón "Ver Producto" */
+.btn-ver {
+    display: block;
+    background-color: #21632a;
+    color: white;
+    padding: 10px;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+
+.btn-ver:hover {
+    background-color: #50b95e; /* Tu verde claro al hacer hover */
+}
+/* Contenedor de filtros */
+.filtros-catalogo {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 30px;
+    padding: 10px;
+}
+
+/* Estilo base de los botones de filtro (basado en .nav-a > a) */
+.btn-filtro {
+    color: #21632a;
+    text-decoration: none;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    padding: 10px 20px;
+    border: 2px solid #21632a;
+    border-radius: 25px; /* Forma de píldora como tu search-bar */
+    transition: all 0.3s ease;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+/* Efecto Hover */
+.btn-filtro:hover {
+    background-color: #21632a;
+    color: #f4f4f4; /* El blanco crema de tu header */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Clase para el filtro activo (el que está seleccionado) */
+.btn-filtro.active {
+    background-color: #50b95e; /* Verde claro de tus hovers */
+    border-color: #50b95e;
+    color: white;
+}
+
+/* Contenedor del mensaje de catálogo vacío */
+.no-productos {
+    grid-column: 1 / -1; /* Ocupa todas las columnas del grid de productos */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    background-color: #f9f9f9;
+    border: 2px dashed #21632a; /* Verde de tu marca */
+    border-radius: 15px;
+    text-align: center;
+    margin: 20px 0;
+    transition: transform 0.3s ease;
+}
+
+.no-productos:hover {
+    transform: scale(1.01);
+}
+
+/* Icono o Imagen decorativa */
+.no-productos-icon {
+    font-size: 4rem;
+    color: #21632a;
+    margin-bottom: 20px;
+    opacity: 0.8;
+}
+
+/* Título del error */
+.no-productos h3 {
+    color: #21632a;
+    font-size: 1.5rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+/* Texto de ayuda */
+.no-productos p {
+    color: #666;
+    max-width: 400px;
+    line-height: 1.6;
+    margin-bottom: 25px;
+}
+
+/* Botón de retorno (reutilizando tu estilo .btn-filtro) */
+.no-productos .btn-reset {
+    display: inline-block;
+    padding: 12px 25px;
+    background-color: #21632a;
+    color: #f4f4f4;
+    text-decoration: none;
+    text-transform: uppercase;
+    font-weight: 600;
+    border-radius: 25px;
+    transition: background 0.3s;
+}
+
+.no-productos .btn-reset:hover {
+    background-color: #50b95e; /* Verde claro del hover de tu header */
+}
