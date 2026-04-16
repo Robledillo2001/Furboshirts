@@ -49,6 +49,7 @@
                         <th>Stock</th>
                         <th>Talla</th>
                         <th>Categoría</th>
+                        <th>Deporte</th>
                         <th>Equipo</th>
                         <th>Precio</th>
                         <th>Acciones</th>
@@ -63,6 +64,7 @@
                                 <td><?= $p['STOCK'] ?></td>
                                 <td><strong><?= $p['TALLA'] ?></strong></td>
                                 <td><?= $p['PRENDA'] ?></td>
+                                <td><?= $p['DEPORTE'] ?></td>
                                 <td><?= $p['NOMBRE_EQUIPO'] ?></td>
                                 <td><?= number_format($p['PRECIO'], 2) ?>€</td>
                                 <td>

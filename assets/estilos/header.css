@@ -118,7 +118,6 @@
     z-index: 1000;
     border: 1px solid #21632a;
     overflow: hidden; /* IMPORTANTE: Corta las esquinas de los enlaces para que no se salgan del radio de 8px */
-    margin-top: 5px; 
 }
 
 /* Estilo general de los enlaces */

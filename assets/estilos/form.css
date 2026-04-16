@@ -9,6 +9,26 @@
     background-color: #f4f4f4;
 }
 
+.redireccion-form {
+    width: 100%; 
+    max-width: 130px; /* Ajustado al ancho de tu clase .formulario */
+    display: flex; 
+    justify-content: center; /* Centra los botones. Usa 'space-between' si quieres uno a cada lado */
+}
+
+.formulario-link {
+    color: #21632a;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 0.9rem;
+    transition: 0.3s;
+}
+
+.formulario-link:hover {
+    color: #50b95e;
+    text-decoration: underline;
+}
+
 .formulario {
     background: #21632a;
     padding: 40px;

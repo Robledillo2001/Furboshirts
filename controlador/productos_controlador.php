@@ -33,12 +33,15 @@
         }
 
         public function AnadirProducto(){
+            $this->checkAdmin();
             $modelo=new Productos();
+
             if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 //Recoger datos de texto
                 $nombre = $_POST['nombre'];
                 $id_equipo = $_POST['equipo'];
                 $id_categoria = $_POST['categoria'];
+                $id_deporte = $_POST['deporte'];
                 $descripcion = $_POST['descripcion'];
                 $precio = $_POST['precio'];
                 $fecha_alta = $_POST['fecha_alta'];
@@ -68,7 +71,7 @@
                 }
 
                 // Llamar al modelo para insertar Producto + Competición + Imágenes
-                $resultado = $modelo->añadirProductos($nombre, $id_equipo, $id_categoria, $descripcion, $precio, $fecha_alta,$anoEdicion, $caracteristicas, $imagen1, $imagen2,$tallas);
+                $resultado = $modelo->añadirProductos($nombre, $id_equipo, $id_categoria,$id_deporte, $descripcion, $precio, $fecha_alta,$anoEdicion, $caracteristicas, $imagen1, $imagen2,$tallas);
 
                 if ($resultado) {
                     header("Location: index.php?action=GestionProductos&msj=ok");
@@ -77,9 +80,14 @@
             }
 
             // Métodos del modelo para llenar los select del formulario
-            $categorias = $modelo->obtenerCategorias(); // SELECT * FROM categorias
-            $equipos = $modelo->obtenerEquipos();      // SELECT * FROM entidad_deportiva
+            $categorias = $modelo->obtenerCategorias();
+            $equipos = $modelo->obtenerEquipos();
             $tallas = $modelo->obtenerTallas();
+
+            // Si el producto ya tiene una categoría asignada, cargamos solo los deportes de esa categoría
+            $id_cat_actual = $_POST['categoria'] ?? null;
+            $deportes = $id_cat_actual ? $modelo->obtenerDeportesPorCategoria($id_cat_actual) : $modelo->obtenerDeportes();
+
             require_once("vista/productos/AnadirProductos.php");
         }
 
@@ -107,6 +115,7 @@
                 $nombre=$_POST['nombre'];
                 $precio=$_POST['precio'];
                 $categoria=$_POST['categoria'];
+                $deporte = $_POST['deporte'];
                 $equipo=$_POST['equipo'];
                 $año_edicion=$_POST['anio'];
                 $descripcion=$_POST['desc'];
@@ -130,15 +139,21 @@
                     move_uploaded_file($_FILES['imagen2']['tmp_name'], $imagen2);
                 }
 
-                $modelo->editarProductos($id_producto,$nombre,$precio,$categoria,$equipo,$año_edicion,$descripcion,$caracteristicas,$imagen1,$imagen2,$tallas);
+                $modelo->editarProductos($id_producto,$nombre,$precio,$categoria,$deporte,$equipo,$año_edicion,$descripcion,$caracteristicas,$imagen1,$imagen2,$tallas);
 
                 header("Location: index.php?action=GestionProductos");
                 exit();
             }
             // Métodos del modelo para llenar los select del formulario
-            $categorias = $modelo->obtenerCategorias(); // SELECT * FROM categorias
-            $equipos = $modelo->obtenerEquipos();      // SELECT * FROM entidad_deportiva
-            $tallas = $modelo->obtenerTallas();        // SELECT * FROM tallas
+            $id_editar = $_GET['id'];
+            $producto = $modelo->obtenerProductoPorId($id_editar);
+            $categorias = $modelo->obtenerCategorias();
+            $equipos = $modelo->obtenerEquipos();
+            $tallas = $modelo->obtenerTallas();
+
+            // Si el producto ya tiene una categoría asignada, cargamos solo los deportes de esa categoría
+            $deportes = $modelo->obtenerDeportesPorCategoria($producto['ID_CAT']);
+
             require_once "vista/productos/EditarProductos.php";
         }
 
@@ -173,10 +188,15 @@
             if($_SERVER['REQUEST_METHOD'] == 'POST'){
                 $prenda=$_POST['prenda'];
                 $descripcion=$_POST['desc'];
-                $deporte=$_POST['deporte'];
+                $deporteSeleccionados=isset($_POST['deporte']) ? $_POST['deporte'] : [];
 
 
-                $modelo->añadirCategoria($prenda,$descripcion,$deporte);
+                $id_cat=$modelo->añadirCategoria($prenda,$descripcion);
+
+
+                foreach($deporteSeleccionados as $id_dep){
+                    $modelo->asignarDeporteCat($id_cat,$id_dep);
+                }
 
                 header("Location: index.php?action=GestionCategorias");//Rerige a la gestion de categorias
                 exit();//Finaliza la ejecucion del script para que ocurra la redireccion
@@ -208,11 +228,21 @@
                 $id_categoria=$_GET['id'];
                 $prenda=$_POST['prenda'];
                 $descripcion=$_POST['desc'];
-
+                $deporteSeleccionados=isset($_POST['deporte']) ? $_POST['deporte'] : [];
+                
                 $modelo->editarCategoria($id_categoria,$prenda,$descripcion);
+
+                $modelo->limpiarDeportesCat($id_categoria,$prenda,$descripcion);
+
+                foreach($deporteSeleccionados as $id_dep){
+                    $modelo->asignarDeporteCat($id_categoria,$id_dep);
+                }
+
                 header("Location: index.php?action=GestionCategorias");
                 exit();
             }
+            $deportes=$modelo->ListarDeportes();
+            $deportesAsignados=$modelo->categorias_deportes($_GET['id']);
 
             require_once "vista/productos/EditarCategorias.php";
         }
@@ -490,7 +520,37 @@
             require_once "vista/productos/AnadirLogos.php";
         }
 
-        public function AsignarEquipos() {
+        public function EliminarCompeticiones(){//Metodo para eliminar las competiciones
+            $this->checkAdmin();
+            $modelo=new Productos();
+            if($_SERVER['REQUEST_METHOD']=='POST'){
+                $id_comp=$_POST['comp'];
+
+                $modelo->eliminarCompeticiones($id_comp);
+
+                header("Location: index.php?action=GestionTemporadas");
+                exit();
+            }
+            $competiciones=$modelo->ListarCompeticiones();
+            require_once "vista/productos/eliminarCompeticion.php";
+        }
+
+        public function EliminarLogos(){//Metodo para eliminar Logos
+            $this->checkAdmin();
+            $modelo=new Productos();
+            if($_SERVER['REQUEST_METHOD']=='POST'){
+                $id_logo=$_POST['logo'];
+
+                $modelo->eliminarLogos($id_logo);
+
+                header("Location: index.php?action=GestionTemporadas");
+                exit();
+            }
+            $logos=$modelo->ListarParches();
+            require_once "vista/productos/eliminarLogo.php";
+        }
+
+        public function AsignarEquipos() {//Metodo para asignar una temporada a un equipo con su competicion y logs especificos
             $this->checkAdmin();
             $modelo = new Productos();
 
@@ -553,26 +613,47 @@
             }
         }
 
-       public function EditarTemporada(){
+       public function EditarTemporada(){//Metodo para editar la temporada
             $this->checkAdmin();
             $modelo = new Productos();
 
             // Verificamos si vienen los datos necesarios
-            if(isset($_GET['id_comp'], $_GET['id_logo'], $_GET['id_equipo']) && isset($_POST['anio_edicion'])){
-                
+            if(isset($_GET['id_comp'], $_GET['id_logo'], $_GET['id_equipo']) && $_SERVER['REQUEST_METHOD'] == 'POST'){
+                //IDs que identifican de donde provienen la temporada
                 $id_comp = (int)$_GET['id_comp'];
-                $id_logo = (int)$_GET['id_logo']; 
+                $old_logo = (int)$_GET['id_logo']; 
                 $id_equipo = (int)$_GET['id_equipo'];
+
+                //Datos a modificar
                 $año_edicion = (int)$_POST['anio_edicion'];
+                $id_logo=(int)$_POST['id_logo'];
+                $parche_especial = null;
 
-                $modelo->editarTemporada($id_comp, $id_logo, $id_equipo, $año_edicion);
-                
-                // Redirigir y CORTAR la ejecución
-                header("Location: index.php?action=GestionTemporadas");
-                exit(); 
+                if(isset($_FILES['imagen'])&& $_FILES['imagen']['error'] == 0){
+                    $carpetaDestino = "assets/img/parches/";
+                    if (!file_exists($carpetaDestino)) {//Se crea la carpeta de destino si no existe
+                        mkdir($carpetaDestino, 0777, true);
+                    }
+                    $nombreImg = time() . "_" . $_FILES['imagen']['name'];
+                    $rutaFinal = $carpetaDestino . $nombreImg;
+
+                    if (move_uploaded_file($_FILES['imagen']['tmp_name'], $rutaFinal)) {
+                        $parche_especial = $rutaFinal;
+                    }
+                }
+
+                // Llamamos al método del modelo para asignar Equipos a competiciones y respectiva temporada
+                $res = $modelo->editarTemporada($id_comp, $id_equipo, $old_logo, $id_logo, $año_edicion, $parche_especial);
+
+                if ($res) {
+                    header("Location: index.php?action=GestionTemporadas");
+                    exit();
+                } else {
+                    die("Error al realizar la asignación en la tabla temporadas.");
+                }
             }
+            $logos = $modelo->listarParches();//Se listaran los parches disponibles si se necesita modificarlos
 
-            // Si no entró al IF, cargamos la vista
             require_once "vista/productos/EditarTemporada.php";
         }
 

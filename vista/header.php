@@ -20,6 +20,8 @@
     <link rel="stylesheet" href="assets/estilos/Tienda.css">
     <link rel="stylesheet" href="assets/estilos/paginacion.css">
     <link rel="stylesheet" href="assets/estilos/catalogo.css">
+    <link rel="stylesheet" href="assets/estilos/producto.css">
+    <link rel="stylesheet" href="assets/estilos/carrito.css">
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
@@ -85,7 +87,7 @@
                             <a href="index.php?action=valoraciones">Valoraciones</a>
                         </div>
                     </div>
-                    <a href="?action=carrito"><i class="fas fa-shopping-cart"></i></a>
+                    <a href="?action=verCarrito"><i class="fas fa-shopping-cart"></i></a>
                     <a href="?action=logout" title="Cerrar Sesión"><i class="fas fa-sign-out-alt"></i></a>
 
                 <?php else: ?>

@@ -104,7 +104,6 @@
         }
 
         public function EditarPerfil(){
-            $this->checkAdmin();
             if($_SERVER['REQUEST_METHOD']=='POST'){
                 $id=$_SESSION['id'];
                 $nombre=$_POST['nombre']??"";
@@ -126,6 +125,12 @@
                     }
                 }
                 $modelo->editarPerfil($id,$nombre,$apellidos,$nombreUser,$correo,$passwdHash);
+
+                $_SESSION['nombre'] = (!empty($nombreUser)) ? $nombreUser : $_SESSION['nombre'];
+                $_SESSION['nombre_real']=(!empty($nombre)) ? $nombre : $_SESSION['nombre_real'];
+                $_SESSION['apellidos']=(!empty($apellidos)) ? $apellidos : $_SESSION['apellidos'];
+                $_SESSION['correo']=(!empty($correo)) ? $correo : $_SESSION['correo'];
+
 
                 header("Location: index.php?action=configuracion&success=1");
                 exit();
@@ -200,9 +205,12 @@
                 $datosUsuario = $modelo->login($usuarioInput, $passwd);
 
                 if($datosUsuario){
-                    // GUARDAR TODO EN LA SESIÓN (Importante para el header)
+                    // GUARDAR TODO EN LA SESIÓN (Importante para el header y editar los datos del usuario en un futuro)
                     $_SESSION['id'] = $datosUsuario['ID_USUARIO'];
                     $_SESSION['nombre'] = $datosUsuario['NOMBRE_USUARIO'];
+                    $_SESSION['nombre_real']=$datosUsuario['NOMBRE'];
+                    $_SESSION['apellidos']=$datosUsuario['APELLIDOS'];
+                    $_SESSION['correo']=$datosUsuario['CORREO'];
                     $_SESSION['ROL'] = $datosUsuario['ROL']; // Sin esto, el header no cambia
                     $_SESSION['IMAGEN'] = $datosUsuario['IMAGEN_USER'];
                     //Si se le dio a la opcion de recordar se guardara una cookie que dure 30 dias

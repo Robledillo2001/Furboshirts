@@ -1,6 +1,13 @@
 <?php 
-include __DIR__ . '/../header.php'; 
+include __DIR__ . '/../header.php';
 ?>
+
+<?php if (isset($_SESSION['error_val'])): ?>
+    <script>
+        alert("<?php echo $_SESSION['error_val']; ?>");
+    </script>
+    <?php unset($_SESSION['error_val']); // Importante borrarlo para que no salga siempre ?>
+<?php endif; ?>
 
 <div class="login-container">
     <div class="formulario">

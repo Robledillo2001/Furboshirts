@@ -40,6 +40,12 @@
                     <a href="index.php?action=AnadirCompeticiones" class="btn-anadir">
                         <i class="fas fa-trophy"></i> Asignar Competiciones
                     </a>
+                    <a href="index.php?action=EliminarCompeticiones" class="btn-anadir">
+                        <i class="fas fa-trash"></i> Eliminar Competiciones
+                    </a>
+                    <a href="index.php?action=EliminarLogos" class="btn-anadir">
+                        <i class="fas fa-trash"></i> Eliminar Logos
+                    </a>
                 </div>
             </div>
             

@@ -11,11 +11,12 @@
             try{ 
                 //Se usa una consulta conjunta de 5 Tablas ya que los productos contienen en su tabla las claves foraneas del ID_EQUIPO Y CATEGORIA Y EL ID DE PRODCUTO ESTA EN OTRA TABLA JUNTO CON EL ID DE TALLAS
                 $sql="SELECT p.ID_PRODUCTO,pt.ID_TALLA,p.NOMBRE, pt.STOCK_ESPECIFICO AS STOCK, t.TALLA,
-                    c.PRENDA, e.NOMBRE_EQUIPO, p.FECHA_ALTA, p.PRECIO
+                    c.PRENDA,d.DEPORTE, e.NOMBRE_EQUIPO, p.FECHA_ALTA, p.PRECIO
                 FROM productos p
                 INNER JOIN productos_tallas pt ON p.ID_PRODUCTO = pt.ID_PRODUCTO
                 INNER JOIN tallas t ON pt.ID_TALLA = t.ID_TALLA
                 LEFT JOIN categorias c ON p.ID_CAT = c.ID_CAT
+                LEFT JOIN deportes d ON p.ID_DEPORTE = d.ID_DEPORTE
                 LEFT JOIN entidad_deportiva e ON p.ID_EQUIPO = e.ID_EQUIPO 
                 LIMIT :inicio, :cantidad";
                 $stmt = $this->db->prepare($sql);
@@ -46,17 +47,18 @@
             }
         }
 
-        public function añadirProductos($nombre, $id_equipo, $id_categoria, $descripcion, $precio, $fecha_alta, $añoEdicion, $caracteristicas, $imagen, $imagen2, $tallas = []) {//Metodo para añadir productos
+        public function añadirProductos($nombre, $id_equipo, $id_categoria,$id_deporte, $descripcion, $precio, $fecha_alta, $añoEdicion, $caracteristicas, $imagen, $imagen2, $tallas = []) {//Metodo para añadir productos
             try {
                 $this->db->beginTransaction();
 
                 // 1. INSERTAR PRODUCTO
-                $sqlProd = "INSERT INTO productos(ID_EQUIPO, ID_CAT, NOMBRE, DESCRIPCION, PRECIO, FECHA_ALTA,AÑO_EDICION, CARACTERISTICAS)
-                            VALUES(:equipo, :cat, :nombre, :descripcion, :precio, :fecha, :anio ,:caracteristicas)";
+                $sqlProd = "INSERT INTO productos(ID_EQUIPO, ID_CAT,ID_DEPORTE, NOMBRE, DESCRIPCION, PRECIO, FECHA_ALTA,AÑO_EDICION, CARACTERISTICAS)
+                            VALUES(:equipo, :cat,:deporte, :nombre, :descripcion, :precio, :fecha, :anio ,:caracteristicas)";
                 
                 $stmtProd = $this->db->prepare($sqlProd);
                 $stmtProd->bindParam(":equipo", $id_equipo, PDO::PARAM_INT);
                 $stmtProd->bindParam(":cat", $id_categoria, PDO::PARAM_INT);
+                $stmtProd->bindParam(":deporte", $id_deporte, PDO::PARAM_INT);
                 $stmtProd->bindParam(":nombre", $nombre, PDO::PARAM_STR);
                 $stmtProd->bindParam(":descripcion", $descripcion, PDO::PARAM_STR);
                 $stmtProd->bindParam(":precio", $precio); // Los decimales se pasan sin tipo específico
@@ -180,6 +182,35 @@
             }
         }
 
+         public function obtenerDeportes() {//Obtener todos los deportes
+            try {
+                $sql = "SELECT ID_DEPORTE, DEPORTE FROM deportes"; //
+                $stmt = $this->db->prepare($sql);
+                $stmt->execute();
+                return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            } catch (PDOException $e) {
+                die("Error al obtener categorías: " . $e->getMessage());
+            }
+        }
+
+        public function obtenerDeportesPorCategoria($id_cat) {//Obtener todos los deportes asociados a una categoria
+            try {
+                $sql = "SELECT 
+                        d.ID_DEPORTE, d.DEPORTE 
+                        FROM deportes d
+                        INNER JOIN categorias_deportes cd ON d.ID_DEPORTE=cd.ID_DEPORTE
+                        WHERE cd.ID_CAT = :id_cat"; //
+                $stmt = $this->db->prepare($sql);
+
+                $stmt->bindValue(':id_cat', $id_cat, PDO::PARAM_INT);
+
+                $stmt->execute();
+                return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            } catch (PDOException $e) {
+                die("Error al obtener categorías: " . $e->getMessage());
+            }
+        }
+
         public function obtenerEquipos() {//Obtener todos los equipos y selecciones
             try {
                 // La tabla se llama entidad_deportiva según tu SQL
@@ -203,7 +234,7 @@
             }
         }
 
-        public function editarProductos($id, $nombre, $precio, $id_cat, $id_equipo,$año_edicion,$descripcion,$caracteristicas,$imagen1,$imagen2, $tallas = []){//Metodo para editar Producto Mediante ID
+        public function editarProductos($id, $nombre, $precio, $id_cat,$id_deporte, $id_equipo,$año_edicion,$descripcion,$caracteristicas,$imagen1,$imagen2, $tallas = []){//Metodo para editar Producto Mediante ID
             try{
                 $this->db->beginTransaction();//Empezamos una transaccion para asegurar que todo se guarde
                 
@@ -223,6 +254,12 @@
                     $sql="UPDATE productos SET ID_CAT=:id_cat WHERE ID_PRODUCTO=:id";
                     $stmt=$this->db->prepare($sql);
                     $stmt->execute([':id_cat'=>$id_cat,':id'=>$id]);
+                }
+
+                if(!empty($id_deporte)){//Comprobamos que el id_categoria no este vacio
+                    $sql="UPDATE productos SET ID_DEPORTE=:id_deporte WHERE ID_PRODUCTO=:id";
+                    $stmt=$this->db->prepare($sql);
+                    $stmt->execute([':id_deporte'=>$id_deporte,':id'=>$id]);
                 }
 
                 if(!empty($id_equipo)){//Comprobamos que el id_equipo no este vacio
@@ -314,6 +351,40 @@
             }
         }
 
+        public function obtenerProductoPorId($id_producto) {
+            try {
+                // Seleccionamos los datos del producto
+                // Incluimos ID_DEPORTE para que el select de la vista sepa qué opción marcar
+                $sql = "SELECT * FROM productos WHERE ID_PRODUCTO = :id";
+                
+                $stmt = $this->db->prepare($sql);
+                $stmt->bindValue(':id', $id_producto, PDO::PARAM_INT);
+                $stmt->execute();
+                
+                $producto = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                if ($producto) {
+                    // También recuperamos las imágenes asociadas a este producto
+                    // para poder mostrarlas en la vista de edición
+                    $sqlImg = "SELECT RUTA FROM imagenes WHERE ID_PRODUCTO = :id ORDER BY ID_IMAGEN ASC";
+                    $stmtImg = $this->db->prepare($sqlImg);
+                    $stmtImg->bindValue(':id', $id_producto, PDO::PARAM_INT);
+                    $stmtImg->execute();
+                    
+                    $imagenes = $stmtImg->fetchAll(PDO::FETCH_ASSOC);
+                    
+                    // Añadimos las rutas de las imágenes al array del producto
+                    // Usamos índices 0 y 1 para que coincidan con imagen1 e imagen2 del controlador
+                    $producto['imagen1'] = isset($imagenes[0]) ? $imagenes[0]['RUTA'] : "";
+                    $producto['imagen2'] = isset($imagenes[1]) ? $imagenes[1]['RUTA'] : "";
+                }
+
+                return $producto;
+            } catch (PDOException $e) {
+                die("Error al obtener el producto: " . $e->getMessage());
+            }
+        }
+
         //Administracion de las Categorias
         public function ListarCategorias($inicio, $cantidad){//Consulta para mostrar las categorias
             try{
@@ -349,7 +420,7 @@
             }
         }
 
-        public function añadirCategoria($prenda,$descripcion,$id_deporte) {//Metodo para añadir categorias
+        public function añadirCategoria($prenda,$descripcion) {//Metodo para añadir categorias
             try {
                 $this->db->beginTransaction();//Empezamos una transaccion para asegurar que todo se guarde
 
@@ -376,24 +447,37 @@
                     $id_cat = $this->db->lastInsertId();//Sacamos el ID de la categoria que insertamos antes para insertar imagenes
                 }
 
-                
-
-                if(!empty($id_cat)){//Insertamos la relacion entre las catgorias y los deportes
-                    $sql="INSERT IGNORE INTO categorias_deportes (ID_CAT, ID_DEPORTE) VALUES (:id_cat, :id_deporte)";//Añadimos IGNORE para evitar el error de clave duplicada
-                    $stmt = $this->db->prepare($sql);
-
-                    $stmt->bindParam(":id_cat",$id_cat,PDO::PARAM_INT);
-                    $stmt->bindParam(":id_deporte",$id_deporte,PDO::PARAM_INT);
-                    $stmt->execute();
-                }
-
                 $this->db->commit();//Guarda los cambios en la BSD
-                return "Categoría añadida con éxito";
+                return $id_cat;
             } catch (PDOException $e) {
                 if($this->db->inTransaction()){
                     $this->db->rollBack();//Se desacen los cambios
                 }
                 die("Error al añadir categoría: " . $e->getMessage());
+            }
+        }
+
+        public function asignarDeporteCat($id_cat,$id_dep){//Metodo que asigna un deporte a una categoria
+            try {
+                $sql = "INSERT INTO categorias_deportes (ID_CAT, ID_DEPORTE) VALUES (:id_cat, :id_dep)";
+                $stmt = $this->db->prepare($sql);
+                $stmt->bindParam(':id_cat', $id_cat,PDO::PARAM_INT);
+                $stmt->bindParam(':id_dep', $id_dep,PDO::PARAM_INT);
+                $stmt->execute();
+                return "Deportes Asignados";
+            } catch (PDOException $e) {
+                die("Error al asignar una categoria a un deporte");
+            }
+        }
+
+        public function limpiarDeportesCat($id_cat){//Metodo para limpiar relaciones antiguas entre una categoria y un deporte
+            try {
+                $sql = "DELETE FROM categorias_deportes WHERE ID_CAT = :id_cat";
+                $stmt = $this->db->prepare($sql);
+                $stmt->bindParam(":id_cat", $id_cat, PDO::PARAM_INT);
+                $stmt->execute();
+            } catch (PDOException $e) {
+                die("Error al limpiar deportes: " . $e->getMessage());
             }
         }
 
@@ -439,6 +523,19 @@
                     $this->db->rollBack();
                 }
                 die("Error al editar categoria: ".$e->getMessage());
+            }
+        }
+
+        public function categorias_deportes($id_cat){//Metodo para comprobar que una categoria esta asignada a un deporte
+            try{
+                $sql="SELECT ID_DEPORTE from categorias_deportes WHERE ID_CAT=:id_cat";
+                $stmt=$this->db->prepare($sql);
+                $stmt->bindParam(":id_cat",$id_cat,PDO::PARAM_INT);
+                $stmt->execute();
+
+                return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            }catch(PDOException $e){
+                die("Error al ver las categorias asignadas a un deporte: ".$e->getMessage());
             }
         }
 
@@ -630,6 +727,7 @@
                     INNER JOIN temporadas t ON c.ID_COMP = t.ID_COMP 
                     INNER JOIN parches p ON t.ID_LOGO = p.ID_LOGO
                     INNER JOIN entidad_deportiva e ON t.ID_EQUIPO = e.ID_EQUIPO
+                    ORDER BY c.ID_COMP ASC
                     LIMIT :inicio, :cantidad";
                 $stmt = $this->db->prepare($sql);
                 $stmt->bindValue(':inicio', $inicio, PDO::PARAM_INT);
@@ -659,7 +757,7 @@
         }
         public function ListarCompeticiones() {//Listar Competiciones
             try {
-                $sql = "SELECT * FROM competiciones";
+                $sql = "SELECT * FROM competiciones ORDER BY NOMBRE_COMP ASC";
                 $stmt = $this->db->prepare($sql);
                 $stmt->execute();
                 return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -714,7 +812,7 @@
 
         public function ListarED(){//Metodo que muestra el resto de las entidades deportivas
             try {
-                $sql = "SELECT * FROM entidad_deportiva";
+                $sql = "SELECT * FROM entidad_deportiva ORDER BY NOMBRE_EQUIPO ASC";
                 $stmt = $this->db->prepare($sql);
                 $stmt->execute();
                 return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -723,7 +821,7 @@
             }
         }
 
-        public function asignarEquipos($id_comp, $id_equipo, $id_logo, $anio, $parche_especial = null) {
+        public function asignarEquipos($id_comp, $id_equipo, $id_logo, $anio, $parche_especial = null) {//Metodo para asignar Equipos a una temporada
             try {
                 $this->db->beginTransaction();
                 
@@ -744,6 +842,30 @@
                 $stmt->bindParam(':parche_especial', $parche_especial, PDO::PARAM_STR);
                 
                 $stmt->execute();
+
+                //Si hay algun producto asociado a un equipo al asignarle una temporada se añadira tambien la asociacion con la competicion de la temporada
+
+                $sql="SELECT ID_PRODUCTO FROM productos WHERE ID_EQUIPO = :id_equipo";
+                $stmt=$this->db->prepare($sql);
+                $stmt->bindParam(':id_equipo',$id_equipo,PDO::PARAM_INT);
+
+                $stmt->execute();
+                $productos=$stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                if(!empty($productos)){
+                    $sql="INSERT IGNORE INTO productos_competiciones (ID_PRODUCTO, ID_COMP)
+                        VALUES(:id_prod,:id_comp)";//Se usa IGNORE si la asociacion con el producto y la competicion ya existe no la inserte dos veces
+                    
+                    $stmt=$this->db->prepare($sql);
+
+                    foreach($productos as $p){
+                        $stmt->execute([
+                            ':id_prod' => $p['ID_PRODUCTO'],
+                            ':id_comp' => $id_comp
+                        ]);
+                    }
+                }
+
                 $this->db->commit();
                 return true;
             } catch(PDOException $e) {
@@ -753,16 +875,25 @@
             }
         }
 
-        public function editarTemporada($id_comp,$id_logo,$id_equipo,$anio_edicion){//Metodo para editar el año de la edicion de la temporada
+        public function editarTemporada($id_comp, $id_equipo, $old_logo, $id_logo, $anio_edicion, $parche_especial = null){//Metodo para editar el año de la edicion de la temporada
             try{
                 $this->db->beginTransaction();
                 
-
-                $sql="UPDATE temporadas SET AÑO_EDICION=:anio_edicion 
-                WHERE ID_COMP=:id_comp AND ID_LOGO=:id_logo AND id_equipo=:id_equipo";
+                $sql="UPDATE temporadas 
+                    SET ID_LOGO=:id_logo, AÑO_EDICION=:anio_edicion, PARCHE_ESPECIAL=:parche_especial
+                    WHERE ID_COMP= :id_comp AND ID_EQUIPO=:id_equipo AND ID_LOGO=:old_logo";
 
                 $stmt=$this->db->prepare($sql);
-                $stmt->execute([":anio_edicion"=>$anio_edicion,":id_comp"=>$id_comp,":id_logo"=>$id_logo,"id_equipo"=>$id_equipo]);
+
+                //Vincalacion de parametros
+                $stmt->bindParam(":id_logo",$id_logo,PDO::PARAM_INT);
+                $stmt->bindParam(":anio_edicion",$anio_edicion,PDO::PARAM_INT);
+                $stmt->bindParam(':parche_especial', $parche_especial, PDO::PARAM_STR);
+                $stmt->bindParam(":id_comp",$id_comp,PDO::PARAM_INT);
+                $stmt->bindParam(":id_equipo",$id_equipo,PDO::PARAM_INT);
+                $stmt->bindParam(":old_logo",$old_logo,PDO::PARAM_INT);
+                
+                $stmt->execute();
 
                 $this->db->commit();
                 return "Temporada Actualizada";
@@ -770,6 +901,7 @@
                 if($this->db->inTransaction()){
                     $this->db->rollBack();
                 }
+
                 die("Error al eliminar temporada: ".$e->getMessage());
             }
         }
@@ -793,6 +925,49 @@
                     $this->db->rollBack();
                 }
                 die("Error al eliminar temporada: ".$e->getMessage());
+            }
+        }
+
+        public function eliminarCompeticiones($id_comp){//Metodo para eliminar competiciones
+            try{
+                $this->db->beginTransaction();
+
+                $sql="DELETE FROM competiciones WHERE ID_COMP=:id_comp";
+                $stmt=$this->db->prepare($sql);
+                $stmt->bindParam(":id_comp",$id_comp,PDO::PARAM_INT);
+                $stmt->execute();
+
+                $this->db->commit();
+            }catch(PDOException $e){
+                if($this->db->inTransaction()){
+                    $this->db->rollBack();
+                }
+                die("Error al eliminar competicion: ".$e->getMessage());
+            }
+        }
+
+        public function eliminarLogos($id_logo){//Metodo para eliminar logos
+            try{
+                $this->db->beginTransaction();
+
+                $sql="DELETE FROM parches WHERE ID_LOGO=:id_logo";
+                $stmt=$this->db->prepare($sql);
+                $stmt->bindParam(":id_logo",$id_logo,PDO::PARAM_INT);
+                $stmt->execute();
+
+                if ($stmt->rowCount() === 0) {
+                    // Si llega aquí, es que el ID no existe en la tabla
+                    // o no coincide con lo que mandaste.
+                    $this->db->rollBack();
+                    die("Error: No se encontró ningún parche con el ID: " . $id_logo);
+                }
+
+                $this->db->commit();
+            }catch(PDOException $e){
+                if($this->db->inTransaction()){
+                    $this->db->rollBack();
+                }
+                die("Error al eliminar parche: ".$e->getMessage());
             }
         }
 

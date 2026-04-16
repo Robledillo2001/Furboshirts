@@ -21,6 +21,35 @@ include __DIR__ . '/../header.php';
                 <textarea name="desc" id="desc"></textarea>
             </div>
 
+            <div class="input-group">
+                <label for="deporte">Asignar Deporte</label>
+                <?php
+                    $asignadosSeguros = [];
+                    if (isset($deportesAsignados) && is_array($deportesAsignados)) {
+                        foreach ($deportesAsignados as $elemento) {
+                            // Si el elemento es un array (ej: ['ID_DEPORTE' => 1]), extraemos el valor
+                            if (is_array($elemento)) {
+                                $asignadosSeguros[] = (string)reset($elemento); 
+                            } else {
+                                // Si ya es un valor simple
+                                $asignadosSeguros[] = (string)$elemento;
+                            }
+                        }
+                    }
+                ?>
+                
+                <?php foreach($deportes as $d): ?>
+                    <?php 
+                        $idActual = (string)$d['ID_DEPORTE'];
+                        $marcado = in_array($idActual, $asignadosSeguros) ? 'checked' : '';//Mostrara los deportes ya marcados si ya esta la categoria asociada a un deporte
+                    ?>
+                    <div class="checkbox-group">
+                        <input type="checkbox" name="deporte[]" value="<?= $d['ID_DEPORTE'] ?>" id="dep_<?= $d['ID_DEPORTE'] ?>" <?= $marcado ?>>
+                        <label for="dep_<?= $d['ID_DEPORTE'] ?>"><?= $d['DEPORTE'] ?></label>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+
             <div class="acciones-form">
                 <button type="submit">Guardar</button>
                 <a href="index.php?action=GestionCategorias">Cancelar</a>

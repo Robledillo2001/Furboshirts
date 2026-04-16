@@ -2,14 +2,57 @@
 
 <div class="layout-gestion">
     <aside class="sidebar-gestion">
-        <h3>Competiciones</h3>
-        <nav>
-            <?php foreach($competiciones as $comp): ?>
-                <a href="index.php?action=mostrarCatalogo&id_comp=<?= $comp['ID_COMP'] ?>">
-                    <?= $comp['NOMBRE_COMP'] ?>
-                </a>
-            <?php endforeach; ?>
-        </nav>
+        <h3>Filtros de Búsqueda</h3>
+        
+        <form action="index.php" method="GET" id="filter-form">
+            <input type="hidden" name="action" value="mostrarCatalogo">
+            
+            <?php if(isset($_GET['tipo'])): ?>
+                <input type="hidden" name="tipo" value="<?= htmlspecialchars($_GET['tipo']) ?>">
+            <?php endif; ?>
+
+            <div class="filter-group">
+                <label for="id_deporte">Deporte</label>
+                <select name="id_deporte" onchange="this.form.submit()">
+                    <option value="">Todos los deportes</option>
+                    <?php foreach($deportes as $dep): ?>
+                        <option value="<?= $dep['ID_DEPORTE'] ?>" <?= (isset($_GET['id_deporte']) && $_GET['id_deporte'] == $dep['ID_DEPORTE']) ? 'selected' : '' ?>>
+                            <?= $dep['DEPORTE'] ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="id_cat">Categoría</label>
+                <select name="id_cat" onchange="this.form.submit()">
+                    <option value="">Todas las categorías</option>
+                    <?php foreach($categorias as $cat): ?>
+                        <option value="<?= $cat['ID_CAT'] ?>" <?= (isset($_GET['id_cat']) && $_GET['id_cat'] == $cat['ID_CAT']) ? 'selected' : '' ?>>
+                            <?= $cat['PRENDA'] ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="id_comp">Competición</label>
+                <select name="id_comp" onchange="this.form.submit()">
+                    <option value="">Todas las competiciones</option>
+                    <?php foreach($competiciones as $comp): ?>
+                        <option value="<?= $comp['ID_COMP'] ?>" <?= (isset($_GET['id_comp']) && $_GET['id_comp'] == $comp['ID_COMP']) ? 'selected' : '' ?>>
+                            <?= $comp['NOMBRE_COMP'] ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+
+            <noscript>
+                <button type="submit" class="btn-filtrar">Filtrar</button>
+            </noscript>
+            
+            <a href="index.php?action=mostrarCatalogo" class="btn-reset">Limpiar Filtros</a>
+        </form>
     </aside>
 
     <main class="contenido-gestion">
@@ -30,7 +73,20 @@
                         <div class="producto-info">
                             <h4 class="producto-titulo"><?= $p['NOMBRE'] ?></h4>
                             <p class="producto-precio"><?= number_format($p['PRECIO'], 2) ?> €</p>
-                            <a href="index.php?action=VerDetalle&id=<?= $p['ID_PRODUCTO'] ?>" class="btn-ver">Ver Producto</a>
+
+                            <div class="producto-rating mb-2">
+                                <?php
+                                    $media=round($p['MEDIA_VALORACION']??0);
+                                    for($i=1;$i<=5;$i++){
+                                        echo ($i<=$media)
+                                        ? '<i class="fas fa-star" style="color: #21632A; font-size: 0.8rem;"></i>' 
+                                        : '<i class="far fa-star" style="color: #50B95E; font-size: 0.8rem;"></i>';
+                                    }
+                                ?>
+                                <span class="text-muted" style="font-size: 0.75rem;">(<?= number_format($p['MEDIA_VALORACION'] ?? 0, 1) ?>)</span>
+                            </div>
+
+                            <a href="index.php?action=VerDetalle&id=<?= $p['ID_PRODUCTO'] ?>&anio=<?=$p["AÑO_EDICION"]?>" class="btn-ver">Ver Producto</a>
                         </div>
                     </div>
                 <?php endforeach; ?>

@@ -4,7 +4,7 @@ include __DIR__ . '/../header.php';
 
 <div class="login-container">
     <div class="formulario" style="max-width: 1000px;">
-        <h2><i class="fas fa-tshirt"></i> Añadir Nuevo Producto</h2>
+        <h2><i class="fas fa-tshirt"></i> Editar Producto</h2>
         
         <form action="index.php?action=EditarProducto&id=<?= $_GET['id'] ?>" method="POST" enctype="multipart/form-data">
             
@@ -26,6 +26,15 @@ include __DIR__ . '/../header.php';
                         <option value="">Seleccione Prenda...</option>
                         <?php foreach($categorias as $cat): ?>
                             <option value="<?= $cat['ID_CAT'] ?>"><?= $cat['PRENDA'] ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="input-group flex-1">
+                    <label for="deporte">Deportes</label>
+                    <select name="deporte" id="deporte">
+                        <option value="">Seleccione Deporte</option>
+                        <?php foreach($deportes as $d): ?>
+                            <option value="<?= $d['ID_DEPORTE'] ?>"><?= $d['DEPORTE'] ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>

@@ -1,0 +1,197 @@
+/* Contenedor principal de personalización */
+.custom-section {
+    background: #F4F4F4; /* Color de fondo según image_5dca66.png */
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+/* Diseño de Radio Buttons para Tallas y Parches */
+.selector-grid {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.selector-item input[type="radio"] {
+    display: none;
+}
+
+
+/* Estilo para las Tallas (Cuadrados) */
+.talla-card {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 45px;
+    height: 45px;
+    background: white;
+    border: 2px solid #21632A; /* Verde Oscuro según image_5dca6b.png */
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    color: #21632A;
+    transition: 0.3s;
+}
+
+/* Estilo para los Parches (Rectángulos con imagen) */
+.patch-card {
+    border: 2px solid #21632A; /* Verde Oscuro */
+    border-radius: 20px;
+    padding: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+    background: #F4F4F4;
+    text-align: center;
+    min-width: 100px;
+    max-height: 240px;
+}
+
+.patch-card img {
+    width: 70px;
+    min-height: 70px;
+    margin-bottom: 5px;
+}
+
+/* Estados Seleccionados */
+.selector-item input[type="radio"]:checked + label .talla-card,
+.selector-item input[type="radio"]:checked + label .patch-card {
+    border-color: #50B95E; /* Verde Claro según image_5dca83.png */
+    background-color: #21632A; /* Fondo Verde Oscuro al seleccionar */
+    color: #F4F4F4; /* Texto blanco para contraste */
+    transform: translateY(-2px);
+}
+
+/* Galería */
+.img-thumbnail-custom {
+    width: 70px;
+    height: 70px;
+    object-fit: cover;
+    cursor: pointer;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    transition: 0.2s;
+}
+
+.img-thumbnail-custom:hover {
+    border-color: #50B95E; /* Verde claro al pasar el mouse */
+}
+
+/* Estilo para inputs de texto y número */
+.form-control {
+    border: 1px solid #21632A;
+}
+
+.form-control:focus {
+    border-color: #50B95E;
+    box-shadow: 0 0 0 0.2rem rgba(80, 185, 94, 0.25);
+}
+/* Estilos para los inputs de texto y número (Nombre y Dorsal) */
+.custom-section .form-control {
+    background-color: #ffffff;
+    border: 2px solid #21632A; /* Verde Oscuro de la imagen */
+    border-radius: 8px;
+    color: #333;
+    padding: 10px 15px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+/* Efecto al hacer clic o escribir en el input */
+.custom-section .form-control:focus {
+    background-color: #ffffff;
+    border-color: #50B95E; /* Cambia a Verde Claro al enfocar */
+    box-shadow: 0 0 8px rgba(80, 185, 94, 0.3); /* Resplandor suave en verde claro */
+    outline: none;
+    color: #21632A;
+}
+
+/* Estilo del placeholder (texto de guía interno) */
+.custom-section .form-control::placeholder {
+    color: #999;
+    font-style: italic;
+    font-size: 0.9rem;
+}
+
+/* Ajuste para el input de número (Dorsal) */
+input[type="number"].form-control {
+    text-align: center;
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
+/* Etiquetas de los inputs */
+.custom-section label.small {
+    color: #21632A; /* Texto de la etiqueta en verde oscuro */
+    margin-bottom: 5px;
+    display: block;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Botón Añadir al Carrito (Color Principal Verde Oscuro) */
+.btn-dark {
+    background-color: #21632A !important;
+    color:#F4F4F4;
+    padding: 20px;
+    border-radius: 12px;
+    border-color: #50B95E;
+}
+
+.btn-dark:hover {
+    background-color: #50B95E !important;
+    border-color: #21632A;
+}
+
+.rating-css {
+    color: #ddd; /* Color de estrella vacía */
+    font-size: 30px;
+    font-weight: 800;
+    text-align: center;
+}
+
+.star-icon {
+    display: flex;
+    flex-direction: row-reverse; /* Permite lógica de selección de izquierda a derecha */
+    justify-content: center;
+    gap: 5px;
+}
+
+.star-icon input {
+    display: none;
+}
+
+.star-icon label {
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: #ddd; /* Gris por defecto */
+}
+
+/* Color cuando una estrella está marcada */
+.star-icon input:checked ~ label {
+    color: #50B95E; /* Verde Claro de la paleta */
+}
+
+/* Color cuando el mouse pasa por encima (Hover) */
+.star-icon label:hover,
+.star-icon label:hover ~ label {
+    color: #21632A; /* Verde Oscuro al pasar el mouse */
+}
+
+/* Ajuste del área de comentarios en la sección de reseñas */
+.custom-section textarea.form-control {
+    resize: none;
+    border: 2px solid #21632A;
+    border-radius: 8px;
+}
+
+.custom-section textarea.form-control:focus {
+    border-color: #50B95E;
+    box-shadow: 0 0 8px rgba(80, 185, 94, 0.3);
+}
+
+/* Ajuste para las estrellas de lectura (las que muestran el promedio arriba) */
+.text-warning .fa-star {
+    color: #50B95E !important; /* Forzamos el verde claro en el resumen del producto */
+}

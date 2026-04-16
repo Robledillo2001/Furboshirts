@@ -1,0 +1,175 @@
+/* Contenedor Principal */
+.carrito-container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 30px;
+    background-color: #f4f4f4; /* Tu color neutro */
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.carrito-container h2, .carrito-container h4, .carrito-container h5 {
+    color: #21632A; /* Verde oscuro */
+    font-weight: 700;
+}
+
+/* Sección de Productos */
+.productos-section {
+    margin-bottom: 25px;
+}
+
+/* Contenedor de la línea del producto */
+.producto-linea {
+    display: flex;
+    justify-content: space-between; /* Separa los bloques span equitativamente */
+    align-items: center;
+    background: white;
+    padding: 15px 20px;
+    margin-bottom: 12px;
+    border-radius: 8px;
+    border-left: 5px solid #50B95E;
+    gap: 15px; /* Añade espacio mínimo entre cada span */
+}
+
+/* Control de los bloques de información */
+.producto-linea span {
+    flex: 1; /* Hace que todos los bloques ocupen el mismo espacio */
+    text-align: center; /* Centra el contenido internamente */
+    font-size: 0.95rem;
+    color: #333;
+}
+
+/* Alineación específica para el primer y último elemento */
+.producto-linea span:first-child {
+    flex: 2; /* El bloque del nombre tiene más espacio */
+    text-align: left;
+}
+
+.producto-linea span:last-child {
+    flex: 0 0 80px; /* El bloque de la imagen es pequeño y fijo */
+    text-align: right;
+}
+
+/* Estilo para la IMAGEN */
+.producto-linea img {
+    max-width: 60px; /* Tamaño máximo de ancho */
+    max-height: 60px; /* Tamaño máximo de alto */
+    object-fit: contain; /* Mantiene la proporción sin deformar */
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    background: #f9f9f9;
+}
+
+/* Botón de basura */
+.btn-icon.delete {
+    color: #dc3545;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.btn-icon.delete:hover {
+    color: #21632A;
+}
+
+.btn-icon.delete {
+    color: #dc3545;
+    font-size: 1.1rem;
+    transition: transform 0.2s;
+}
+
+.btn-icon.delete:hover {
+    transform: scale(1.2);
+}
+
+/* Sección de Envío y Pago */
+.envio-pago-section label {
+    display: block;
+    margin-top: 15px;
+    font-weight: 600;
+    color: #333;
+}
+
+#direccion-api {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #ddd;
+    border-radius: 6px;
+    margin-top: 5px;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+#direccion-api:focus {
+    border-color: #21632A;
+}
+
+.metodos {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 5px;
+}
+
+.metodos input[type="radio"] {
+    accent-color: #21632A;
+    margin-right: 5px;
+}
+
+/* Resumen Final */
+.resumen-section {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: right;
+}
+
+.resumen-section p {
+    margin: 5px 0;
+    color: #666;
+}
+
+.resumen-section h4 {
+    margin-top: 10px;
+    font-size: 1.5rem;
+}
+
+/* Botones de Acción */
+.btn-finalizar {
+    display: block;
+    width: 100%;
+    background-color: #50B95E; /* Verde vibrante */
+    color: white;
+    border: none;
+    padding: 15px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 25px;
+    transition: background 0.3s;
+}
+
+.btn-finalizar:hover {
+    background-color: #21632A; /* Cambio a verde oscuro al pasar el mouse */
+}
+
+a[href*="vaciarCarrito"] {
+    color: #21632A;
+    text-decoration: none;
+    font-size: 0.9rem;
+    display: inline-block;
+    margin-top: 10px;
+}
+
+a[href*="vaciarCarrito"]:hover {
+    text-decoration: underline;
+}
+
+/* Mapa previsualización (Simulación Geoapify) */
+#mapa-previsualizacion {
+    border: 2px dashed #21632A;
+    border-radius: 8px;
+    color: #21632A;
+    font-weight: bold;
+}

@@ -21,12 +21,13 @@ include __DIR__ . '/../header.php';
                 <textarea name="desc" id="desc" required></textarea>
             </div>
             <div class="input-group">
-                <label for="deporte">Deporte</label>
-                <select name="deporte" id="deporte">
-                        <?php foreach($deportes as $d):?>
-                            <option value="<?= $d['ID_DEPORTE']?>"><?=$d['DEPORTE']?></option>
-                        <?php endforeach;?>
-                </select>
+                <label for="deporte">Asignar Deporte</label>
+                <?php foreach($deportes as $d): ?>
+                    <div class="checkbox-group">
+                        <input type="checkbox" name="deporte[]" value="<?= $d['ID_DEPORTE'] ?>" id="dep_<?= $d['ID_DEPORTE'] ?>">
+                        <label for="dep_<?= $d['ID_DEPORTE'] ?>"><?= $d['DEPORTE'] ?></label>
+                    </div>
+                <?php endforeach; ?>
             </div>
 
             <div class="acciones-form">

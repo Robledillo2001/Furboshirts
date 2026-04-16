@@ -1,5 +1,5 @@
 <?php 
-include __DIR__ . '/../header.php'; 
+include __DIR__ . '/../header.php';
 ?>
 
 <div class="login-container">
@@ -29,6 +29,18 @@ include __DIR__ . '/../header.php';
                         <?php endforeach; ?>
                     </select>
                 </div>
+
+                <div class="input-group flex-1">
+                    <label for="deporte">Deportes</label>
+                    <select name="deporte" id="deporte" required>
+                        <option value="">Seleccione Deporte</option>
+                        <?php foreach($deportes as $d): ?>
+                            <option value="<?= $d['ID_DEPORTE'] ?>"><?= $d['DEPORTE'] ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                
+
                 <div class="input-group flex-1">
                     <label for="equipo">Equipo / Selección</label>
                     <select name="equipo" id="equipo" required>
