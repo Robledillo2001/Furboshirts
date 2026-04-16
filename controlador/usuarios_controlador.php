@@ -86,6 +86,7 @@
         }
 
         public function EliminarUsuario(){
+            $this->checkAdmin();
             if(isset($_GET['id'])){
                 $id=(int)$_GET['id'];
                 $origen = $_GET['from']?? '';

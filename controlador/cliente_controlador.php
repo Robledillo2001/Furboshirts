@@ -210,5 +210,9 @@
             //Fallback: Si alguien entra aquí mal, lo mandamos al catálogo
             header("Location: index.php?action=mostrarCatalogo");
         }
+
+        public function procesarCompra(){
+            require_once "vista/clientes/procesarCompra.php";
+        }
     }
 ?>

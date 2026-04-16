@@ -38,7 +38,7 @@ include __DIR__ . '/../header.php';
 
             <button type="submit" class="btn-login">EDITAR DATOS</button>
         </form>
-        <a href="index.php?action=EditarPerfil">Volver a Inicio</a></b>
+        <a href="index.php?action=configuracion">Volver a Inicio</a></b>
     </div>
 </div>
 
