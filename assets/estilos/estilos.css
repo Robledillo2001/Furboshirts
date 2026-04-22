@@ -1,4 +1,35 @@
-* {
+/* =====================================================
+   VARIABLES GLOBALES
+   ===================================================== */
+:root {
+    --verde-oscuro:   #1a5224;
+    --verde-medio:    #21632a;
+    --verde-claro:    #50b95e;
+    --verde-hover:    #3da84a;
+    --crema:          #fcf6ed;
+    --gris-fondo:     #f5f6fa;
+    --gris-claro:     #eef0f5;
+    --gris-borde:     #e0e3eb;
+    --texto-oscuro:   #1e2330;
+    --texto-medio:    #4a5568;
+    --texto-suave:    #8a94a6;
+    --blanco:         #ffffff;
+    --rojo:           #e53e3e;
+    --rojo-hover:     #c53030;
+    --sombra-sm:      0 2px 8px rgba(0,0,0,0.07);
+    --sombra-md:      0 4px 20px rgba(0,0,0,0.10);
+    --sombra-lg:      0 8px 40px rgba(0,0,0,0.14);
+    --radio-sm:       6px;
+    --radio-md:       12px;
+    --radio-lg:       20px;
+    --radio-pill:     50px;
+    --transicion:     0.3s ease;
+}
+
+/* =====================================================
+   RESET Y BASE
+   ===================================================== */
+*, *::before, *::after {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -6,13 +37,77 @@
 
 @font-face {
     font-family: 'Open Sans';
-    src: url("../fuentes/Open_Sans/OpenSans-Italic-VariableFont_wdth\,wght.ttf");
+    src: url("../fuentes/Open_Sans/OpenSans-VariableFont_wdth,wght.ttf") format("truetype");
     font-weight: 100 900;
     font-style: normal;
     font-display: swap;
 }
 
+@font-face {
+    font-family: 'Open Sans';
+    src: url("../fuentes/Open_Sans/OpenSans-Italic-VariableFont_wdth,wght.ttf") format("truetype");
+    font-weight: 100 900;
+    font-style: italic;
+    font-display: swap;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
 body {
-    background-color: #f4f4f4; /* Un gris muy clarito para separar secciones */
-    font: 'Open Sans';
+    font-family: 'Open Sans', system-ui, -apple-system, sans-serif;
+    background-color: var(--gris-fondo);
+    color: var(--texto-oscuro);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+    background-color: var(--verde-claro);
+    color: var(--blanco);
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+a {
+    text-decoration: none;
+}
+
+/* =====================================================
+   UTILIDADES GLOBALES
+   ===================================================== */
+.contenedor {
+    width: 100%;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 5%;
+}
+
+.seccion {
+    padding: 60px 5%;
+}
+
+/* Badge genérico */
+.badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: var(--radio-pill);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.badge-nuevo {
+    background: linear-gradient(135deg, var(--verde-claro), var(--verde-medio));
+    color: var(--blanco);
+}
+
+.badge-oferta {
+    background: linear-gradient(135deg, #f97316, #dc2626);
+    color: var(--blanco);
 }

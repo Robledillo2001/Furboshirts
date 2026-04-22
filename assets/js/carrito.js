@@ -52,3 +52,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
+// Funcion para cambiar la cantidad de productos en el carrito
+function actualizarCantidad(indice, cantidad) {
+    const nCantidad = parseInt(cantidad);
+    
+    if (nCantidad >= 1 && nCantidad <= 99) {
+        // Redirigimos a la acción del controlador pasándole los parámetros por URL
+        window.location.href = `index.php?action=actualizarCantidad&indice=${indice}&cantidad=${nCantidad}`;
+    } else {
+        alert("La cantidad debe estar entre 1 y 99");
+        location.reload(); // Recargamos para restaurar el valor anterior
+    }
+}

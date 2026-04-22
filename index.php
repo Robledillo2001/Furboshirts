@@ -1,17 +1,11 @@
 <?php
+    error_reporting(E_ERROR | E_PARSE);
     //Archivos con cada uno de los controladores
     require_once "controlador/usuarios_controlador.php";
     require_once "controlador/productos_controlador.php";
     require_once "controlador/cliente_controlador.php";
 
-    session_start();//Iniciar sesion para guardar datos necesarios en un array de sesion al hacer login
-
-    //$acciones_publicas=["inicio","login","registrar"];//Rutas las cuales no hace falta estar logueado con un usuario para (Pensar algo para cuando implementemos los productos en la tienda)
-
-    /*if (in_array($currentAction, $accionesProtegidas) && !isset($_SESSION['admin'])) {
-            header("Location: index.php?action=inicio");
-            exit();
-    }*/
+    session_start();
 
     $usuario=new usuarios_controlador;
     $productos=new productos_controlador;
@@ -28,6 +22,8 @@
     "eliminarDelCarrito"=>$cliente,
     "vaciarCarrito"=>$cliente,
     "procesarCompra"=>$cliente,
+    "pedidoConfirmado"=>$cliente,
+    "actualizarCantidad"=>$cliente,
     "GestionProductos"=>$productos,
     "AnadirProducto"=>$productos,
     "EditarProducto"=>$productos,

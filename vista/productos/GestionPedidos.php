@@ -36,42 +36,36 @@
 
         <div class="container-tabla">
             <div class="header-seccion">
-                <h2 class="titulo-seccion">Gestión de Tallas</h2>
-                <a href="index.php?action=AñadirCategoria" class="btn-anadir">
-                    <i class="fas fa-ruler"></i> Nueva Talla
-                </a>
+                <h2 class="titulo-seccion">Historial de Pedidos</h2>
             </div>
-            
+
             <table class="tabla-gestion">
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>NOMBRE_USUARIO</th>
-                        <th>FECHA</th>
-                        <th>TOTAL</th>
-                        <th>ESTADO</th>
-                        <th>DIRECCION_ENVIO</th>
-                        <th>METODO_PAGO</th>
+                        <th>Usuario</th>
+                        <th>Fecha</th>
+                        <th>Total</th>
+                        <th>Estado</th>
+                        <th>Dirección Envío</th>
+                        <th>Método Pago</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php if (!empty($tallasPag)): ?>
+                    <?php if (!empty($pedidosPag)): ?>
                         <?php foreach ($pedidosPag as $p): ?>
                             <tr>
-                                <td><?= $p['ID_TALLA'] ?></td>
+                                <td><?= $p['ID_PEDIDO'] ?></td>
                                 <td><?= htmlspecialchars($p['NOMBRE_USUARIO']) ?></td>
-                                <td><?= htmlspecialchars($p['FECHA'])?></td>
-                                <td><?= $p['TOTAL'] ?></td>
+                                <td><?= htmlspecialchars($p['FECHA']) ?></td>
+                                <td><?= number_format($p['TOTAL'], 2) ?> €</td>
                                 <td><?= htmlspecialchars($p['ESTADO']) ?></td>
+                                <td><?= htmlspecialchars($p['DIRECCION_ENVIO']) ?></td>
                                 <td><?= htmlspecialchars($p['METODO_PAGO']) ?></td>
-                                <td>
-                                    <a href="index.php?action=EditarTalla&id=<?= $t['ID_TALLA'] ?>" class="btn-icon edit"><i class="fas fa-edit"></i></a>
-                                    <a href="index.php?action=EliminarTalla&id=<?= $t['ID_TALLA'] ?>" class="btn-icon delete" onclick="return confirm('¿Eliminar este producto?')"><i class="fas fa-trash"></i></a>
-                                </td>
                             </tr>
                         <?php endforeach; ?>
                     <?php else: ?>
-                        <tr><td colspan="8">No hay productos registrados.</td></tr>
+                        <tr><td colspan="7">No hay pedidos registrados.</td></tr>
                     <?php endif; ?>
                 </tbody>
             </table>

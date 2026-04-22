@@ -23,7 +23,7 @@
                                 <li><a href="index.php?action=GestionAdmin">GESTIÓN USUARIOS</a></li>
                             <?php else: ?>
                                 <li><a href="index.php?action=inicio">INICIO</a></li>
-                                <li><a href="index.php?action=Productos">PRODUCTOS</a></li>
+                                <li><a href="index.php?action=mostrarCatalogo">PRODUCTOS</a></li>
                             <?php endif; ?>
                         </ul>
                     </div>

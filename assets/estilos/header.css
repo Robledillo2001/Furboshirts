@@ -1,27 +1,55 @@
-/* Header Principal */
+/* =====================================================
+   HEADER PRINCIPAL
+   ===================================================== */
 .main-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px 5%;
-    background-color: #f4f4f4;
-    color:#21632a;
+    padding: 0 5%;
+    height: 72px;
+    background-color: var(--blanco);
     position: sticky;
     top: 0;
     z-index: 1000;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 1px 0 var(--gris-borde), var(--sombra-sm);
+    transition: box-shadow var(--transicion);
 }
 
-/* Logo */
+.main-header.scrolled {
+    box-shadow: var(--sombra-md);
+}
+
+/* Línea de acento verde en la base del header */
+.main-header::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, var(--verde-medio), var(--verde-claro));
+}
+
+/* =====================================================
+   LOGO
+   ===================================================== */
 .logo img {
-    width: 100px;
+    width: 90px;
     display: block;
+    transition: opacity var(--transicion);
 }
 
-/* Enlaces de navegacion*/
+.logo img:hover {
+    opacity: 0.85;
+}
+
+/* =====================================================
+   NAVEGACIÓN
+   ===================================================== */
 .nav-menu {
     display: flex;
-    gap: 30px;
+    gap: 8px;
+    align-items: center;
 }
 
 .nav-a {
@@ -30,113 +58,218 @@
 }
 
 .nav-a > a {
-    color: #21632a;
+    color: var(--texto-oscuro);
     text-decoration: none;
     font-weight: 600;
     text-transform: uppercase;
-    font-size: 0.9rem;
-    transition: color 0.3s;
+    font-size: 0.82rem;
+    letter-spacing: 0.8px;
+    padding: 8px 14px;
+    border-radius: var(--radio-sm);
+    transition: color var(--transicion), background-color var(--transicion);
+    display: block;
 }
 
 .nav-a > a:hover {
-    color: #50b95e;
+    color: var(--verde-medio);
+    background-color: rgba(33, 99, 42, 0.06);
 }
 
-/* Acciones: Buscador e Iconos */
+/* Indicador activo */
+.nav-a > a.active {
+    color: var(--verde-medio);
+    background-color: rgba(33, 99, 42, 0.08);
+}
+
+/* =====================================================
+   DROPDOWN MENÚ
+   ===================================================== */
+.dropdown {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 100%; /* Pegado al header */
+    background-color: var(--blanco);
+    min-width: 220px;
+    box-shadow: var(--sombra-lg);
+    border-radius: var(--radio-md);
+    z-index: 1001;
+    border: 1px solid var(--gris-borde);
+    overflow: hidden;
+    padding: 4px 0;
+}
+
+.dropdown-content::before {
+    content: "";
+    position: absolute;
+    top: -20px;
+    left: 0;
+    width: 100%;
+    height: 20px;
+}
+
+@keyframes dropdown-in {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.dropdown-content a {
+    color: var(--texto-medio);
+    padding: 12px 18px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.88rem;
+    font-weight: 500;
+    transition: background var(--transicion), color var(--transicion), padding-left var(--transicion);
+    border-bottom: 1px solid var(--gris-claro);
+}
+
+.dropdown-content a:last-child {
+    border-bottom: none;
+}
+
+.dropdown-content a:hover {
+    background-color: rgba(33, 99, 42, 0.06);
+    color: var(--verde-medio);
+    padding-left: 22px;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+/* =====================================================
+   ACCIONES DEL HEADER (Búsqueda e Iconos)
+   ===================================================== */
 .header-actions {
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 16px;
 }
 
+/* Barra de búsqueda */
 .search-bar {
     display: flex;
-    background-color: #21632a;
-    border-radius: 20px;
-    padding: 5px 10px;
+    background-color: var(--gris-claro);
+    border: 1.5px solid var(--gris-borde);
+    border-radius: var(--radio-pill);
+    padding: 6px 14px;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
+    transition: border-color var(--transicion), box-shadow var(--transicion);
+}
+
+.search-bar:focus-within {
+    border-color: var(--verde-claro);
+    box-shadow: 0 0 0 3px rgba(80, 185, 94, 0.15);
 }
 
 .search-bar input {
     background: transparent;
-    border: 2px solid f4f4f4;
-    border-radius: 10px;
-    color: #f4f4f4;
-    padding: 5px;
+    border: none;
+    color: var(--texto-oscuro);
+    padding: 2px 4px;
     outline: none;
-    width: 150px;
+    width: 160px;
+    font-size: 0.88rem;
+    font-family: inherit;
+}
+
+.search-bar input::placeholder {
+    color: var(--texto-suave);
 }
 
 .search-bar button {
     background: transparent;
     border: none;
-    color: #f4f4f4;
+    color: var(--verde-medio);
     cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    transition: color var(--transicion);
 }
 
+.search-bar button:hover {
+    color: var(--verde-claro);
+}
+
+/* Iconos de acción */
 .icons {
     display: flex;
-    gap: 20px;
-    font-size: 2.5rem;
+    align-items: center;
+    gap: 12px;
 }
 
-.icons a {
-    color: #21632a;
-    transition: transform 0.2s, color 0.2s;
+.icons .dropdown-content a {
+    display: flex !important;
+    width: 100% !important;
+    height: auto !important;
+    padding: 12px 16px !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    background-color: transparent !important;
+    color: var(--texto-medio) !important;
+    font-size: 0.85rem !important;
+    text-transform: none !important;
+    justify-content: flex-start !important;
+    border-bottom: 1px solid var(--gris-claro) !important;
+    transform: none !important; /* Evita que el enlace flote */
 }
 
-.icons img{
-    width: 65px;
-    height: 65px;       
-    border-radius: 50%;
-    object-fit: cover; 
-    cursor: pointer;
-    display: block;
+.icons .dropdown-content a i {
+    width: 40px; /* Ancho fijo para que los iconos del menú se alineen */
+    font-size: 2rem;
 }
 
-.icons a:hover {
-    color: #50b95e;
-    transform: scale(1.1);
+.icons .dropdown-content a:hover {
+    background-color: rgba(33, 99, 42, 0.06) !important;
+    color: var(--verde-medio) !important;
+    padding-left: 20px !important;
 }
 
-/*Menu Vertical*/
-/* Contenedor principal */
-.dropdown {
+.icons .dropdown-content a:last-child {
+    border-bottom: none !important;
+}
+
+/* Icono del carrito con badge de cantidad */
+.icons a[href*="verCarrito"],
+.icons a[href*="logout"],
+ .icons a[href*="login"]{
     position: relative;
-    display: inline-block;
+    color:var(--verde-oscuro);
 }
 
-/* Caja del menú */
-.dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: #f4f4f4;
-    min-width: 180px;
-    box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
-    border-radius: 8px;
-    z-index: 1000;
-    border: 1px solid #21632a;
-    overflow: hidden; /* IMPORTANTE: Corta las esquinas de los enlaces para que no se salgan del radio de 8px */
+.icons a[href*="verCarrito"]:hover,
+.icons a[href*="logout"]:hover,
+.icons a[href*="login"]:hover {
+    position: relative;
+    color:var(--verde-medio);
 }
 
-/* Estilo general de los enlaces */
-.dropdown-content a {
-    color: #21632a;
-    padding: 12px 16px;
-    text-decoration: none;
+/* Imagen de perfil */
+.icons img,
+.img-perfil {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    object-fit: cover;
+    cursor: pointer;
+    border: 2px solid var(--gris-borde);
+    transition: border-color var(--transicion), transform var(--transicion);
     display: block;
-    font-size: 0.85rem;
-    transition: background 0.3s, color 0.3s;
-    border-bottom: 1px solid #f4f4f4;
 }
 
-/* Hover para los demás enlaces (Pedidos, etc) */
-.dropdown-content a:hover {
-    background-color: #21632a; /* Gris claro en lugar de verde para que no se confunda */
-    color: #f4f4f4;
-}
-
-.dropdown:hover .dropdown-content {
-    display: block;
+.icons img:hover,
+.img-perfil:hover {
+    border-color: var(--verde-claro);
+    transform: scale(1.05);
 }

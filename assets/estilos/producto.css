@@ -1,161 +1,318 @@
-/* Contenedor principal de personalización */
-.custom-section {
-    background: #F4F4F4; /* Color de fondo según image_5dca66.png */
-    padding: 20px;
-    border-radius: 12px;
-    border: 1px solid #ddd;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+/* =====================================================
+   PRODUCT DETAIL PAGE
+   ===================================================== */
+
+/* Two-column layout wrapper */
+.product-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 52px;
+    max-width: 1100px;
+    margin: 52px auto;
+    padding: 0 32px;
+    align-items: start;
 }
 
-/* Diseño de Radio Buttons para Tallas y Parches */
-.selector-grid {
+/* =====================================================
+   GALLERY COLUMN
+   ===================================================== */
+.product-gallery {
+    position: sticky;
+    top: 90px;
+}
+
+.product-main-image {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: contain;
+    background: var(--gris-claro);
+    border-radius: 20px;
+    border: 1px solid var(--gris-borde);
+    display: block;
+    transition: transform 0.4s ease;
+}
+
+.product-main-image:hover {
+    transform: scale(1.02);
+}
+
+.product-thumbnails {
     display: flex;
     gap: 10px;
+    margin-top: 14px;
+    justify-content: center;
+}
+
+.img-thumbnail-custom {
+    width: 72px;
+    height: 72px;
+    object-fit: cover;
+    cursor: pointer;
+    border: 2px solid var(--gris-borde);
+    border-radius: 10px;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+    background: var(--gris-claro);
+}
+
+.img-thumbnail-custom:hover,
+.img-thumbnail-custom.active {
+    border-color: var(--verde-claro);
+    transform: translateY(-2px);
+}
+
+/* =====================================================
+   INFO COLUMN
+   ===================================================== */
+.product-info-column {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.product-name {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--texto-oscuro);
+    line-height: 1.2;
+    margin: 0 0 8px;
+    letter-spacing: -0.5px;
+}
+
+.product-price-tag {
+    font-size: 2.2rem;
+    font-weight: 900;
+    color: var(--verde-medio);
+    letter-spacing: -1px;
+    margin-bottom: 14px;
+}
+
+.product-description {
+    color: var(--texto-medio);
+    font-size: 0.95rem;
+    line-height: 1.7;
+    margin-bottom: 6px;
+}
+
+.product-features {
+    color: var(--texto-suave);
+    font-size: 0.88rem;
+    font-style: italic;
+    margin-bottom: 28px;
+    line-height: 1.5;
+}
+
+/* =====================================================
+   CUSTOM SECTION (tallas, parches, personalización)
+   ===================================================== */
+.custom-section {
+    background: var(--gris-claro);
+    padding: 24px;
+    border-radius: 16px;
+    border: 1px solid var(--gris-borde);
     margin-bottom: 20px;
+}
+
+.custom-section-label {
+    display: block;
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: var(--texto-oscuro);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-bottom: 14px;
+}
+
+/* =====================================================
+   TALLAS SELECTOR
+   ===================================================== */
+.selector-tallas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.selector-parches {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 8px;
+    justify-content: flex-start;
 }
 
 .selector-item input[type="radio"] {
     display: none;
 }
 
-
-/* Estilo para las Tallas (Cuadrados) */
 .talla-card {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 45px;
-    height: 45px;
-    background: white;
-    border: 2px solid #21632A; /* Verde Oscuro según image_5dca6b.png */
-    border-radius: 8px;
+    width: 48px;
+    height: 48px;
+    background: #fff;
+    border: 2px solid var(--verde-medio);
+    border-radius: 10px;
     cursor: pointer;
-    font-weight: bold;
-    color: #21632A;
-    transition: 0.3s;
+    font-weight: 700;
+    color: var(--verde-medio);
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
 }
 
-/* Estilo para los Parches (Rectángulos con imagen) */
+.talla-card:hover {
+    background: var(--verde-medio);
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(33, 99, 42, 0.25);
+}
+
+.selector-item input[type="radio"]:checked + label .talla-card {
+    background: var(--verde-medio);
+    color: #fff;
+    border-color: var(--verde-claro);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 14px rgba(33, 99, 42, 0.35);
+}
+
+/* =====================================================
+   PARCHES SELECTOR
+   ===================================================== */
 .patch-card {
-    border: 2px solid #21632A; /* Verde Oscuro */
-    border-radius: 20px;
-    padding: 8px;
+    border: 2px solid var(--gris-borde);
+    border-radius: 14px;
+    padding: 10px 8px;
     cursor: pointer;
-    transition: 0.3s;
-    background: #F4F4F4;
+    transition: all 0.2s ease;
+    background: #fff;
     text-align: center;
-    min-width: 100px;
-    max-height: 240px;
+    width: 90px;
+    min-height: 130px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+}
+
+.patch-card:hover {
+    border-color: var(--verde-claro);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(33, 99, 42, 0.15);
 }
 
 .patch-card img {
-    width: 70px;
-    min-height: 70px;
-    margin-bottom: 5px;
+    width: 54px;
+    min-height: 54px;
+    object-fit: contain;
 }
 
-/* Estados Seleccionados */
-.selector-item input[type="radio"]:checked + label .talla-card,
 .selector-item input[type="radio"]:checked + label .patch-card {
-    border-color: #50B95E; /* Verde Claro según image_5dca83.png */
-    background-color: #21632A; /* Fondo Verde Oscuro al seleccionar */
-    color: #F4F4F4; /* Texto blanco para contraste */
+    border-color: var(--verde-medio);
+    background: var(--verde-medio);
+    color: #fff;
     transform: translateY(-2px);
+    box-shadow: 0 4px 14px rgba(33, 99, 42, 0.35);
 }
 
-/* Galería */
-.img-thumbnail-custom {
-    width: 70px;
-    height: 70px;
-    object-fit: cover;
-    cursor: pointer;
-    border: 2px solid transparent;
-    border-radius: 8px;
-    transition: 0.2s;
+.selector-item input[type="radio"]:checked + label .patch-card small {
+    color: #fff;
 }
 
-.img-thumbnail-custom:hover {
-    border-color: #50B95E; /* Verde claro al pasar el mouse */
-}
-
-/* Estilo para inputs de texto y número */
-.form-control {
-    border: 1px solid #21632A;
-}
-
-.form-control:focus {
-    border-color: #50B95E;
-    box-shadow: 0 0 0 0.2rem rgba(80, 185, 94, 0.25);
-}
-/* Estilos para los inputs de texto y número (Nombre y Dorsal) */
+/* =====================================================
+   PERSONALIZACIÓN INPUTS
+   ===================================================== */
 .custom-section .form-control {
-    background-color: #ffffff;
-    border: 2px solid #21632A; /* Verde Oscuro de la imagen */
-    border-radius: 8px;
-    color: #333;
-    padding: 10px 15px;
-    transition: all 0.3s ease;
+    background-color: #fff;
+    border: 2px solid var(--gris-borde);
+    border-radius: 10px;
+    color: var(--texto-oscuro);
+    padding: 11px 15px;
+    transition: all 0.2s ease;
     font-weight: 500;
-}
-
-/* Efecto al hacer clic o escribir en el input */
-.custom-section .form-control:focus {
-    background-color: #ffffff;
-    border-color: #50B95E; /* Cambia a Verde Claro al enfocar */
-    box-shadow: 0 0 8px rgba(80, 185, 94, 0.3); /* Resplandor suave en verde claro */
-    outline: none;
-    color: #21632A;
-}
-
-/* Estilo del placeholder (texto de guía interno) */
-.custom-section .form-control::placeholder {
-    color: #999;
-    font-style: italic;
+    font-family: inherit;
+    width: 100%;
     font-size: 0.9rem;
+    outline: none;
 }
 
-/* Ajuste para el input de número (Dorsal) */
+.custom-section .form-control:focus {
+    border-color: var(--verde-claro);
+    box-shadow: 0 0 0 3px rgba(80, 185, 94, 0.18);
+    background-color: #fff;
+}
+
+.custom-section .form-control::placeholder {
+    color: var(--texto-suave);
+    font-style: italic;
+    font-size: 0.88rem;
+}
+
 input[type="number"].form-control {
     text-align: center;
     font-size: 1.1rem;
-    font-weight: bold;
+    font-weight: 700;
 }
 
-/* Etiquetas de los inputs */
-.custom-section label.small {
-    color: #21632A; /* Texto de la etiqueta en verde oscuro */
-    margin-bottom: 5px;
+.custom-section label.small,
+.custom-section label.fw-bold {
+    color: var(--texto-oscuro);
+    margin-bottom: 6px;
     display: block;
+    font-weight: 700;
+    font-size: 0.82rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
 
-/* Botón Añadir al Carrito (Color Principal Verde Oscuro) */
+/* =====================================================
+   ADD TO CART BUTTON
+   ===================================================== */
 .btn-dark {
-    background-color: #21632A !important;
-    color:#F4F4F4;
-    padding: 20px;
-    border-radius: 12px;
-    border-color: #50B95E;
+    background: linear-gradient(135deg, var(--verde-medio), var(--verde-hover)) !important;
+    color: #fff !important;
+    padding: 18px 24px;
+    border-radius: 14px;
+    border: none !important;
+    font-size: 1rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    box-shadow: 0 4px 20px rgba(33, 99, 42, 0.35);
+    transition: all 0.3s ease;
+    cursor: pointer;
 }
 
-.btn-dark:hover {
-    background-color: #50B95E !important;
-    border-color: #21632A;
+.btn-dark:hover:not(:disabled) {
+    background: linear-gradient(135deg, var(--verde-hover), var(--verde-claro)) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(33, 99, 42, 0.45);
 }
 
+.btn-dark:disabled {
+    background: var(--gris-borde) !important;
+    color: var(--texto-suave) !important;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* =====================================================
+   STAR RATING (valoration form)
+   ===================================================== */
 .rating-css {
-    color: #ddd; /* Color de estrella vacía */
-    font-size: 30px;
+    color: var(--gris-borde);
+    font-size: 28px;
     font-weight: 800;
     text-align: center;
 }
 
 .star-icon {
     display: flex;
-    flex-direction: row-reverse; /* Permite lógica de selección de izquierda a derecha */
+    flex-direction: row-reverse;
     justify-content: center;
-    gap: 5px;
+    gap: 6px;
 }
 
 .star-icon input {
@@ -164,34 +321,49 @@ input[type="number"].form-control {
 
 .star-icon label {
     cursor: pointer;
-    transition: all 0.2s ease;
-    color: #ddd; /* Gris por defecto */
+    transition: all 0.15s ease;
+    color: var(--gris-borde);
+    font-size: 1.6rem;
 }
 
-/* Color cuando una estrella está marcada */
 .star-icon input:checked ~ label {
-    color: #50B95E; /* Verde Claro de la paleta */
+    color: var(--verde-claro);
 }
 
-/* Color cuando el mouse pasa por encima (Hover) */
 .star-icon label:hover,
 .star-icon label:hover ~ label {
-    color: #21632A; /* Verde Oscuro al pasar el mouse */
+    color: var(--verde-medio);
+    transform: scale(1.15);
 }
 
-/* Ajuste del área de comentarios en la sección de reseñas */
+/* =====================================================
+   REVIEWS SECTION
+   ===================================================== */
 .custom-section textarea.form-control {
     resize: none;
-    border: 2px solid #21632A;
-    border-radius: 8px;
+    min-height: 90px;
 }
 
-.custom-section textarea.form-control:focus {
-    border-color: #50B95E;
-    box-shadow: 0 0 8px rgba(80, 185, 94, 0.3);
-}
-
-/* Ajuste para las estrellas de lectura (las que muestran el promedio arriba) */
 .text-warning .fa-star {
-    color: #50B95E !important; /* Forzamos el verde claro en el resumen del producto */
+    color: var(--verde-claro) !important;
+}
+
+/* =====================================================
+   RESPONSIVE
+   ===================================================== */
+@media (max-width: 768px) {
+    .product-layout {
+        grid-template-columns: 1fr;
+        gap: 32px;
+        margin: 28px auto;
+        padding: 0 16px;
+    }
+
+    .product-gallery {
+        position: static;
+    }
+
+    .product-name {
+        font-size: 1.5rem;
+    }
 }

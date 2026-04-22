@@ -37,14 +37,11 @@
             <div class="header-seccion">
                 <h2 class="titulo-seccion">Competiciones y Logos</h2>
                 <div class="botones-header">
-                    <a href="index.php?action=AnadirCompeticiones" class="btn-anadir">
-                        <i class="fas fa-trophy"></i> Asignar Competiciones
+                    <a href="index.php?action=AnadirLogo" class="btn-anadir">
+                        <i class="fas fa-tag"></i> Nuevo Logo/Parche
                     </a>
-                    <a href="index.php?action=EliminarCompeticiones" class="btn-anadir">
-                        <i class="fas fa-trash"></i> Eliminar Competiciones
-                    </a>
-                    <a href="index.php?action=EliminarLogos" class="btn-anadir">
-                        <i class="fas fa-trash"></i> Eliminar Logos
+                    <a href="index.php?action=AnadirCompeticion" class="btn-anadir">
+                        <i class="fas fa-trophy"></i> Nueva Competición
                     </a>
                 </div>
             </div>
@@ -52,10 +49,9 @@
             <table class="tabla-gestion">
                 <thead>
                     <tr>
-                        <th>Equipo</th>
                         <th>Competición</th>
                         <th>Parche Estándar</th>
-                        <th>Parche Especial</th>
+                        <th>Parche Campeón</th>
                         <th>Tipo</th>
                         <th>Año/Edición</th>
                         <th>Acciones</th>
@@ -65,23 +61,16 @@
                     <?php 
                     // Usamos la variable que definiste en el controlador para esta sección
                     if (!empty($temporadasPag)): ?>
-                        <?php foreach ($temporadasPag as $t): ?>
+                        <?php foreach ($temporadasPag as $c): ?>
                             <tr>
-                                <td><strong><?= htmlspecialchars($t['NOMBRE_EQUIPO']) ?></strong></td>
-                                <td><strong><?= htmlspecialchars($t['NOMBRE_COMP']) ?></strong></td>
-                                <td><img src="<?= htmlspecialchars($t['PARCHE']) ?>" alt=""></td>
+                                <td><strong><?= htmlspecialchars($c['NOMBRE_COMP']) ?></strong></td>
+                                <td><?= htmlspecialchars($c['PARCHE']) ?></td>
+                                <td><?= htmlspecialchars($c['PARCHE_CAMPEON']) ?></td>
+                                <td><span class="badge"><?= htmlspecialchars($c['TIPO_COMP']) ?></span></td>
+                                <td><?= htmlspecialchars($c['ANO_EDICION']) ?></td>
                                 <td>
-                                    <?php if (!empty($t['PARCHE_ESPECIAL'])): ?>
-                                        <img src="<?= htmlspecialchars($t['PARCHE_ESPECIAL']) ?>" alt="Parche Especial" style="width: 50px;">
-                                    <?php else: ?>
-                                        <span style="color: #888; font-style: italic;">Sin parche especial</span>
-                                    <?php endif; ?>
-                                </td>
-                                <td><span class="badge"><?= htmlspecialchars($t['TIPO_COMP']) ?></span></td>
-                                <td><?= htmlspecialchars($t['ANO_EDICION']) ?></td>
-                                <td>
-                                    <a href="index.php?action=EditarTemporada&id_comp=<?=$t['ID_COMP']?>&id_logo=<?=$t['ID_LOGO']?>&id_equipo=<?=$t['ID_EQUIPO']?>" class="btn-icon edit"><i class="fas fa-edit"></i></a>
-                                    <a href="index.php?action=EliminarTemporada&id_comp=<?=$t['ID_COMP']?>&id_logo=<?=$t['ID_LOGO']?>&id_equipo=<?=$t['ID_EQUIPO']?>" class="btn-icon delete" onclick="return confirm('¿Eliminar esta Temporada?')"><i class="fas fa-trash"></i></a>
+                                    <a href="#" class="btn-icon edit"><i class="fas fa-edit"></i></a>
+                                    <a href="#" class="btn-icon delete" onclick="return confirm('¿Eliminar esta relación?')"><i class="fas fa-trash"></i></a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

@@ -52,7 +52,7 @@
                 $this->db->beginTransaction();
 
                 // 1. INSERTAR PRODUCTO
-                $sqlProd = "INSERT INTO productos(ID_EQUIPO, ID_CAT,ID_DEPORTE, NOMBRE, DESCRIPCION, PRECIO, FECHA_ALTA,AÑO_EDICION, CARACTERISTICAS)
+                $sqlProd = "INSERT INTO productos(ID_EQUIPO, ID_CAT,ID_DEPORTE, NOMBRE, DESCRIPCION, PRECIO, FECHA_ALTA,ANO_EDICION, CARACTERISTICAS)
                             VALUES(:equipo, :cat,:deporte, :nombre, :descripcion, :precio, :fecha, :anio ,:caracteristicas)";
                 
                 $stmtProd = $this->db->prepare($sqlProd);
@@ -269,7 +269,7 @@
                 }
 
                 if(!empty($año_edicion)){//Comprobamos que el id_equipo no este vacio
-                    $sql="UPDATE productos SET AÑO_EDICION=:anio_edicion WHERE ID_PRODUCTO=:id";
+                    $sql="UPDATE productos SET ANO_EDICION=:anio_edicion WHERE ID_PRODUCTO=:id";
                     $stmt=$this->db->prepare($sql);
                     $stmt->execute([':anio_edicion'=>$año_edicion,':id'=>$id]);
                 }
@@ -722,7 +722,7 @@
         //Administracion de los Logos y Competiciones
         public function ListarTemporadas($inicio, $cantidad){//Consulta Conjunta de las tablas de competiciones, logos y competiciones_parches
             try{
-                $sql = "SELECT c.ID_COMP,c.NOMBRE_COMP,e.ID_EQUIPO,e.NOMBRE_EQUIPO,p.ID_LOGO,p.PARCHE, t.PARCHE_ESPECIAL, c.TIPO_COMP, t.AÑO_EDICION 
+                $sql = "SELECT c.ID_COMP,c.NOMBRE_COMP,e.ID_EQUIPO,e.NOMBRE_EQUIPO,p.ID_LOGO,p.PARCHE, t.PARCHE_ESPECIAL, c.TIPO_COMP, t.ANO_EDICION
                     FROM competiciones c 
                     INNER JOIN temporadas t ON c.ID_COMP = t.ID_COMP 
                     INNER JOIN parches p ON t.ID_LOGO = p.ID_LOGO
@@ -826,11 +826,11 @@
                 $this->db->beginTransaction();
                 
                 // Usamos ON DUPLICATE KEY para que si el ID_COMP e ID_EQUIPO ya existen, se actualice el año y el parche
-                $sql = "INSERT INTO temporadas (ID_COMP, ID_EQUIPO, ID_LOGO, AÑO_EDICION, PARCHE_ESPECIAL) 
+                $sql = "INSERT INTO temporadas (ID_COMP, ID_EQUIPO, ID_LOGO, ANO_EDICION, PARCHE_ESPECIAL)
                         VALUES (:id_comp, :id_equipo, :id_logo, :anio, :parche_especial)
-                        ON DUPLICATE KEY UPDATE 
+                        ON DUPLICATE KEY UPDATE
                             ID_LOGO = VALUES(ID_LOGO),
-                            AÑO_EDICION = VALUES(AÑO_EDICION),
+                            ANO_EDICION = VALUES(ANO_EDICION),
                             PARCHE_ESPECIAL = VALUES(PARCHE_ESPECIAL)";
 
                 $stmt = $this->db->prepare($sql);
@@ -879,8 +879,8 @@
             try{
                 $this->db->beginTransaction();
                 
-                $sql="UPDATE temporadas 
-                    SET ID_LOGO=:id_logo, AÑO_EDICION=:anio_edicion, PARCHE_ESPECIAL=:parche_especial
+                $sql="UPDATE temporadas
+                    SET ID_LOGO=:id_logo, ANO_EDICION=:anio_edicion, PARCHE_ESPECIAL=:parche_especial
                     WHERE ID_COMP= :id_comp AND ID_EQUIPO=:id_equipo AND ID_LOGO=:old_logo";
 
                 $stmt=$this->db->prepare($sql);

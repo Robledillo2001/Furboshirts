@@ -25,8 +25,8 @@
             }
         }
 
-        public function MostrarCatalogo() {
-            $this->comprobarRol();//Metodo para comprobar si el rol del user es un cliente
+        public function mostrarCatalogo() {
+            //$this->comprobarRol();//Metodo para comprobar si el rol del user es un cliente
             //Instanciamos el modelo Cliente que creamos antes
             $modelo = new Cliente();
 
@@ -40,6 +40,7 @@
                 'id_equipo'=>$_GET['id_equipo']??null,
                 'id_cat'=>$_GET['id_cat']??null,
                 'id_deporte'=>$_GET['id_deporte']??null,
+                'ano_edicion'=>$_GET['ano_edicion']??null,
             ];
             
             $paginaActual = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
@@ -58,8 +59,9 @@
             $competiciones = $modelo->listarCompeticiones();
             $listaEquipos = $modelo->listarEntidadesPorTipo('Equipo');
             $listaSelecciones = $modelo->listarEntidadesPorTipo('Seleccion');
-            $categorias = $modelo->listarCategorias(); // Necesitas crear este método en el modelo
+            $categorias = $modelo->listarCategorias();
             $deportes = $modelo->listarDeportes();
+            $anios = $modelo->listarAnios();
 
             //Cargar la vista del catálogo para el cliente
             require_once "vista/clientes/catalogo.php";
@@ -90,10 +92,10 @@
                 $parches = [];
                 $tallas = [];
                 $valoracion_promedio = $producto['VALORACION_PROMEDIO'] ?? 0; // Extraer la media
+                $prenda=$modelo->comprobarCaTegoria($producto['ID_CAT']);//Llamamos a la categoria para comprobar el tipo de prenda
 
                 //Procesar el array de resultados
                 foreach ($resultado as $fila) {
-                    
                     //Guardar imágenes únicas
                     if (!empty($fila['RUTA_IMAGEN']) && !in_array($fila['RUTA_IMAGEN'], $imagenes)) {
                         $imagenes[] = $fila['RUTA_IMAGEN'];
@@ -116,6 +118,7 @@
                             $tallas[$fila['NOMBRE_TALLA']] = (int)$fila['ID_TALLA'];//Guardamos el nombre de la talla con el id de la misma comom valor
                         }
                     }
+
                 }
 
                 //Cargar la vista pasándole todas las variables procesadas
@@ -183,6 +186,21 @@
             require_once"vista/clientes/verCarrito.php";
         }
 
+        public function actualizarCantidad(){//Metodo que se usa para cambiar la cantidad de un producto especifico
+            $this->comprobarCliente();//Comprobamos que el usario este registrado ver el carrito
+            if (isset($_GET['indice']) && isset($_GET['cantidad'])) {
+                $indice = intval($_GET['indice']);
+                $cantidad = intval($_GET['cantidad']);
+
+                if (isset($_SESSION['carrito'][$indice]) && $cantidad > 0) {
+                    $_SESSION['carrito'][$indice]['cantidad'] = $cantidad;
+                }
+            }
+            // Redirigimos de vuelta al carrito para que se actualicen los totales
+            header("Location: index.php?action=verCarrito");
+            exit();
+        }
+
         public function vaciarCarrito(){
             $this->comprobarCliente();//Comprobamos que el usario este registrado al vaciar el carrito
             if(isset($_SESSION['carrito'])){
@@ -191,7 +209,45 @@
             header("Location: index.php?action=verCarrito");
         }
 
-        public function guardarValoracion(){
+        public function procesarCompra(){
+            $this->comprobarCliente();
+            $modelo = new Cliente();
+            $subtotal = 0;
+
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                $direccion = trim($_POST['direccion'] ?? '');
+                $metodo_pago = $_POST['metodo_pago'] ?? 'Tarjeta';
+
+                if (empty($direccion) || empty($_SESSION['carrito'])) {
+                    header("Location: index.php?action=verCarrito");
+                    exit();
+                }
+
+                foreach ($_SESSION['carrito'] as $i) {
+                    $subtotal += $i['precio'] * ($i['cantidad'] ?? 1);
+                }
+                $envio = 5.00;
+                $total = $subtotal + $envio;
+                $fecha = date('Y-m-d H:i:s');
+                $estado = 'Pendiente';
+                $id_user = $_SESSION['id'];
+
+                $modelo->registrarCompra($id_user, $fecha, $total, $estado, $direccion, $metodo_pago, $_SESSION['carrito']);
+
+                unset($_SESSION['carrito']);
+                header("Location: index.php?action=pedidoConfirmado");
+                exit();
+            }
+
+            require_once "vista/clientes/procesarCompra.php";
+        }
+
+        public function pedidoConfirmado(){
+            $this->comprobarCliente();
+            require_once "vista/clientes/pedidoConfirmado.php";
+        }
+
+        public function guardarValoracion(){//Metodo para guardar las valoraciones de los clientes de cada producto
             $modelo = new Cliente();
 
             $this->comprobarCliente();//Comprobamos que el usario este registrado al meter una valoracion
@@ -209,10 +265,6 @@
             }
             //Fallback: Si alguien entra aquí mal, lo mandamos al catálogo
             header("Location: index.php?action=mostrarCatalogo");
-        }
-
-        public function procesarCompra(){
-            require_once "vista/clientes/procesarCompra.php";
         }
     }
 ?>

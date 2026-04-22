@@ -1,236 +1,300 @@
+/* =====================================================
+   PAGINACIÓN
+   ===================================================== */
 .paginacion {
-    margin-top: 20px;
+    margin-top: 28px;
     display: flex;
     justify-content: center;
-    gap: 5px;
+    gap: 6px;
 }
 
 .btn-pag {
-    padding: 8px 12px;
-    border: 1px solid #21632a;
+    padding: 9px 14px;
+    border: 1.5px solid var(--gris-borde);
     text-decoration: none;
-    color: #333;
-    border-radius: 4px;
+    color: var(--texto-medio);
+    border-radius: var(--radio-sm);
+    font-size: 0.88rem;
+    font-weight: 600;
+    transition: all var(--transicion);
+    background: var(--blanco);
 }
 
 .btn-pag.active {
-    background-color: #50b95e;
-    color: #f4f4f4;
-    border-color: #21632a;
+    background: linear-gradient(135deg, var(--verde-medio), var(--verde-hover));
+    color: var(--blanco);
+    border-color: transparent;
+    box-shadow: 0 2px 10px rgba(33, 99, 42, 0.3);
 }
 
 .btn-pag:hover:not(.active) {
-    background-color: #21632a;
-    color: #f4f4f4;
+    background-color: var(--verde-medio);
+    color: var(--blanco);
+    border-color: var(--verde-medio);
+    transform: translateY(-1px);
 }
 
-/*Boton para añadir datos en la BSD*/
+/* =====================================================
+   CABECERA DE SECCIÓN ADMIN
+   ===================================================== */
 .header-seccion {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
 }
 
-.botones-header{
-    display:flex;
+.botones-header {
+    display: flex;
     flex-direction: row;
     gap: 10px;
 }
 
 .btn-anadir {
-    display: flex;
-    background-color: #28a745; /* Verde éxito */
-    color: white;
-    padding: 10px 20px;
-    border-radius: 5px;
-    gap: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #28a745, #1e7e34);
+    color: var(--blanco);
+    padding: 10px 22px;
+    border-radius: var(--radio-sm);
     text-decoration: none;
-    font-weight: bold;
-    transition: background 0.3s ease;
+    font-weight: 700;
+    font-size: 0.88rem;
+    transition: opacity var(--transicion), transform var(--transicion), box-shadow var(--transicion);
+    box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
 }
 
 .btn-anadir:hover {
-    background-color: #218838;
-}
-.btn-anadir {
-    background-color: #28a745; /* Verde éxito */
-    color: white;
-    padding: 10px 20px;
-    border-radius: 5px;
-    text-decoration: none;
-    font-weight: bold;
-    transition: background 0.3s ease;
+    opacity: 0.9;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(40, 167, 69, 0.4);
 }
 
-.btn-anadir:hover {
-    background-color: #218838;
-}
-
-
-/* Contenedor de la tabla */
+/* =====================================================
+   TABLAS DE GESTIÓN
+   ===================================================== */
 .container-tabla {
     width: 95%;
     margin: 20px auto;
-    background: #f4f4f4;
-    border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    overflow: hidden; /* Para que las esquinas de la tabla respeten el border-radius */
+    background: var(--blanco);
+    border-radius: var(--radio-md);
+    box-shadow: var(--sombra-md);
+    overflow: hidden;
 }
 
-/* Tabla General */
 .tabla-gestion {
     width: 100%;
     border-collapse: collapse;
-    font-family: 'Segoe UI', sans-serif;
+    font-family: 'Open Sans', system-ui, sans-serif;
 }
 
-.tabla-gestion img{
-    width: 85px;
-    height: 90px;
+.tabla-gestion img {
+    width: 80px;
+    height: 85px;
+    object-fit: cover;
+    border-radius: var(--radio-sm);
 }
 
-/* Cabecera */
 .tabla-gestion thead {
-    background-color: #21632a; /* Color oscuro profesional */
-    color: #f4f4f4;
+    background: linear-gradient(135deg, var(--verde-medio), var(--verde-oscuro));
+    color: var(--blanco);
     text-transform: uppercase;
-    font-size: 0.85rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.8px;
 }
 
-.tabla-gestion th, .tabla-gestion td {
-    padding: 15px 12px;
+.tabla-gestion th,
+.tabla-gestion td {
+    padding: 14px 12px;
     text-align: center;
-    border-bottom: 1px solid #f4f4f4;
+    border-bottom: 1px solid var(--gris-claro);
+    font-size: 0.88rem;
+    color: var(--texto-medio);
 }
 
-/* Estilo de la imagen */
+.tabla-gestion thead th {
+    color: var(--blanco);
+    font-weight: 700;
+    border-bottom: none;
+}
+
 .img-user {
     border-radius: 50%;
     object-fit: cover;
-    border: 2px solid #f4f4f4;
+    border: 2px solid var(--gris-borde);
 }
 
-/* Filas cebra (opcional para leer mejor) */
 .tabla-gestion tbody tr:nth-child(even) {
-    background-color: #f4f4f4;
+    background-color: var(--gris-fondo);
 }
 
 .tabla-gestion tbody tr:hover {
-    background-color: #f4f4f4; /* Resaltado al pasar el ratón */
+    background-color: rgba(33, 99, 42, 0.05);
 }
 
-/* Botones de acción */
+/* =====================================================
+   BOTONES DE ACCIÓN EN TABLA
+   ===================================================== */
 .acciones {
     display: flex;
     justify-content: center;
-    gap: 15px;
+    gap: 12px;
 }
 
 .btn-icon {
-    font-size: 1.1rem;
-    transition: transform 0.2s;
+    font-size: 1rem;
+    transition: transform var(--transicion), color var(--transicion);
     text-decoration: none;
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
 }
 
-.btn-icon.edit { color: #50b95e; }    /* Verde */
-.btn-icon.delete { color: #e74c3c; }  /* Rojo */
-
-.btn-icon:hover {
-    transform: scale(1.2);
+.btn-icon.edit {
+    color: var(--verde-claro);
 }
 
-/* Layout Principal */
+.btn-icon.edit:hover {
+    color: var(--verde-medio);
+    background-color: rgba(80, 185, 94, 0.12);
+    transform: scale(1.15);
+}
+
+.btn-icon.delete {
+    color: #e74c3c;
+}
+
+.btn-icon.delete:hover {
+    color: var(--rojo-hover);
+    background-color: rgba(229, 62, 62, 0.1);
+    transform: scale(1.15);
+}
+
+/* =====================================================
+   LAYOUT PANEL ADMIN
+   ===================================================== */
 .layout-gestion {
     display: flex;
     min-height: 80vh;
-    background-color: #f4f4f4;
+    background-color: var(--gris-fondo);
 }
 
-/* Menú Lateral (Sidebar) */
+/* Sidebar */
 .sidebar-gestion {
-    width: 250px;
-    background-color: #21632a;
-    color: #f4f4f4;
-    padding: 20px 0;
-    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    width: 256px;
+    background: linear-gradient(180deg, var(--verde-medio) 0%, var(--verde-oscuro) 100%);
+    color: var(--blanco);
+    padding: 24px 0;
+    box-shadow: 2px 0 12px rgba(0,0,0,0.12);
+    flex-shrink: 0;
 }
 
 .sidebar-gestion h3 {
     text-align: center;
-    font-size: 1.2rem;
-    margin-bottom: 20px;
-    color: #f4f4f4;
-    border-bottom: 1px solid #f4f4f4;
-    padding-bottom: 10px;
+    font-size: 1rem;
+    margin-bottom: 24px;
+    color: rgba(255,255,255,0.8);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 1px solid rgba(255,255,255,0.12);
+    padding: 0 20px 18px;
 }
 
 .sidebar-gestion .filter-group {
-    margin-bottom: 15px;
+    margin-bottom: 18px;
+    padding: 0 16px;
+}
+
+.sidebar-gestion .filter-group label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: rgba(255,255,255,0.65);
+    margin-bottom: 6px;
 }
 
 .sidebar-gestion select {
     width: 100%;
-    padding: 8px;
-    background: #50b95e;
-    color: #f4f4f4;
-    border: 1px solid #f4f4f4;
-    border-radius: 4px;
+    padding: 9px 12px;
+    background: rgba(0,0,0,0.25);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: var(--radio-sm);
     cursor: pointer;
+    font-family: inherit;
+    font-size: 0.88rem;
+    outline: none;
+    transition: border-color var(--transicion), background var(--transicion);
+}
+
+.sidebar-gestion select:focus {
+    border-color: rgba(255,255,255,0.45);
+    background: rgba(0,0,0,0.35);
+}
+
+/* Opciones del desplegable: fondo blanco con texto oscuro para legibilidad */
+.sidebar-gestion select option {
+    background: #fff;
+    color: var(--texto-oscuro);
 }
 
 .btn-reset {
     display: block;
     margin-top: 10px;
-    font-size: 0.8rem;
-    color: #f4f4f4;
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.55);
     text-decoration: none;
     text-align: center;
+    transition: color var(--transicion);
 }
 
 .btn-reset:hover {
-    color: #ff4d4d;
+    color: #fc8181;
 }
 
 .sidebar-gestion nav a {
-    display: block;
-    padding: 15px 25px;
-    color: #f4f4f4;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 24px;
+    color: rgba(255,255,255,0.78);
     text-decoration: none;
-    transition: all 0.3s;
+    font-size: 0.9rem;
     font-weight: 500;
+    transition: background var(--transicion), color var(--transicion), padding-left var(--transicion);
+    border-left: 3px solid transparent;
 }
 
 .sidebar-gestion nav a i {
-    margin-right: 10px;
-    width: 20px;
+    width: 18px;
+    font-size: 0.95rem;
+    flex-shrink: 0;
 }
 
-.sidebar-gestion nav a:hover, 
+.sidebar-gestion nav a:hover,
 .sidebar-gestion nav a.active {
-    background-color: #50b95e;
-    color: #fff;
-    border-left: 4px solid #f4f4f4; /* Color de acento de tu web */
+    background-color: rgba(255,255,255,0.1);
+    color: var(--blanco);
+    border-left-color: var(--verde-claro);
+    padding-left: 28px;
 }
 
 /* Contenido Principal */
 .contenido-gestion {
     flex: 1;
-    padding: 30px;
+    padding: 32px;
+    overflow-x: auto;
 }
 
 .titulo-seccion {
-    margin-bottom: 20px;
-    color: #333;
-    font-size: 1.8rem;
+    margin-bottom: 24px;
+    color: var(--texto-oscuro);
+    font-size: 1.7rem;
+    font-weight: 800;
 }
-
-/* Ajuste de la tabla que ya tenías */
-.container-tabla {
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-}
-
-
-

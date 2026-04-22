@@ -41,12 +41,14 @@
                     $sql .= " AND p.ID_CAT = :id_cat";
                 }
 
-                //Si se especifica por Entidad Deportiva
                 if (!empty($filtros['id_deporte'])) {
                     $sql .= " AND p.ID_DEPORTE = :id_deporte";
                 }
 
-                
+                if (!empty($filtros['ano_edicion'])) {
+                    $sql .= " AND p.ANO_EDICION = :ano_edicion";
+                }
+
                 $sql .= " LIMIT :inicio, :cantidad";
                 
                 $stmt = $this->db->prepare($sql);
@@ -67,8 +69,12 @@
                     $stmt->bindValue(':id_cat', $filtros['id_cat'], PDO::PARAM_INT);
                 }
 
-                if (!empty($filtros['id_deporte'])) {//Si se especifica un deporte
+                if (!empty($filtros['id_deporte'])) {
                     $stmt->bindValue(':id_deporte', $filtros['id_deporte'], PDO::PARAM_INT);
+                }
+
+                if (!empty($filtros['ano_edicion'])) {
+                    $stmt->bindValue(':ano_edicion', $filtros['ano_edicion'], PDO::PARAM_STR);
                 }
 
                 //Parametros para el inicio y la cantidad de cada pagina
@@ -84,14 +90,12 @@
 
         public function contarTotalProductos($filtros = []) {
             try {
-                // Base de la consulta con los JOINs necesarios para M:N
-                $sql = "SELECT COUNT(DISTINCT p.ID_PRODUCTO) 
+                $sql = "SELECT COUNT(DISTINCT p.ID_PRODUCTO)
                         FROM productos p
                         INNER JOIN entidad_deportiva e ON p.ID_EQUIPO = e.ID_EQUIPO
                         LEFT JOIN productos_competiciones pc ON p.ID_PRODUCTO = pc.ID_PRODUCTO
                         WHERE 1=1";
 
-                // Construcción dinámica de la consulta (Tokens)
                 if (!empty($filtros['tipo'])) {
                     $sql .= " AND e.TIPO = :tipo";
                 }
@@ -101,10 +105,18 @@
                 if (!empty($filtros['id_equipo'])) {
                     $sql .= " AND p.ID_EQUIPO = :id_equipo";
                 }
+                if (!empty($filtros['id_cat'])) {
+                    $sql .= " AND p.ID_CAT = :id_cat";
+                }
+                if (!empty($filtros['id_deporte'])) {
+                    $sql .= " AND p.ID_DEPORTE = :id_deporte";
+                }
+                if (!empty($filtros['ano_edicion'])) {
+                    $sql .= " AND p.ANO_EDICION = :ano_edicion";
+                }
 
                 $stmt = $this->db->prepare($sql);
 
-                // Vinculación de parámetros (Binds) 
                 if (!empty($filtros['tipo'])) {
                     $stmt->bindValue(':tipo', $filtros['tipo'], PDO::PARAM_STR);
                 }
@@ -113,6 +125,15 @@
                 }
                 if (!empty($filtros['id_equipo'])) {
                     $stmt->bindValue(':id_equipo', $filtros['id_equipo'], PDO::PARAM_INT);
+                }
+                if (!empty($filtros['id_cat'])) {
+                    $stmt->bindValue(':id_cat', $filtros['id_cat'], PDO::PARAM_INT);
+                }
+                if (!empty($filtros['id_deporte'])) {
+                    $stmt->bindValue(':id_deporte', $filtros['id_deporte'], PDO::PARAM_INT);
+                }
+                if (!empty($filtros['ano_edicion'])) {
+                    $stmt->bindValue(':ano_edicion', $filtros['ano_edicion'], PDO::PARAM_STR);
                 }
 
                 $stmt->execute();
@@ -167,6 +188,16 @@
             }
         }
 
+        public function listarAnios(){
+            try {
+                $sql = "SELECT DISTINCT ANO_EDICION FROM productos ORDER BY ANO_EDICION DESC";
+                $stmt = $this->db->query($sql);
+                return $stmt->fetchAll(PDO::FETCH_COLUMN);
+            } catch (PDOException $e) {
+                die("Error al listar años: " . $e->getMessage());
+            }
+        }
+
         //Ficha Tecnica de Producto
         public function verDetalle($id,$anio){//Metodo para ver el detalle de un producto
             try{
@@ -186,18 +217,18 @@
                 LEFT JOIN productos_competiciones pc ON p.ID_PRODUCTO = pc.ID_PRODUCTO
                 LEFT JOIN competiciones c ON pc.ID_COMP = c.ID_COMP
                 LEFT JOIN temporadas t_temp ON (p.ID_EQUIPO = t_temp.ID_EQUIPO 
-                                           AND p.AÑO_EDICION = t_temp.AÑO_EDICION 
+                                           AND p.ANO_EDICION = t_temp.ANO_EDICION
                                            AND pc.ID_COMP = t_temp.ID_COMP)
                 LEFT JOIN parches pa ON t_temp.ID_LOGO = pa.ID_LOGO
                 /* Unimos con tallas para saber disponibilidad */
                 LEFT JOIN productos_tallas pt ON p.ID_PRODUCTO = pt.ID_PRODUCTO
                 LEFT JOIN tallas tal ON pt.ID_TALLA = tal.ID_TALLA
                 WHERE p.ID_PRODUCTO = :id
-                AND p.AÑO_EDICION = :anio
+                AND p.ANO_EDICION = :anio
                 ORDER BY i.ID_IMAGEN ASC, tal.ID_TALLA ASC";
                 $stmt=$this->db->prepare($sql);
                 $stmt->bindParam(":id",$id,PDO::PARAM_INT);
-                 $stmt->bindParam(":anio",$anio,PDO::PARAM_STR);//SE GUARDO EN LA BSD COMO VARCHAR(4)
+                $stmt->bindParam(":anio",$anio,PDO::PARAM_STR);//SE GUARDO EN LA BSD COMO VARCHAR(4)
 
                 $stmt->execute();
                 return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -206,8 +237,21 @@
             }
         }
 
+        public function comprobarCaTegoria($id){//Metodo para comprobar la categoria
+            try{
+                $sql="SELECT PRENDA FROM categorias WHERE ID_CAT =:id";
+                $stmt=$this->db->prepare($sql);
+                $stmt->bindParam(":id",$id,PDO::PARAM_INT);
+                $stmt->execute();
+                return $stmt->fetchColumn();
+            }catch(PDOException $e){
+                die("Error al comprobar la categoria: ".$e->getMessage());
+            }
+        }
+
         public function insertarValoracion($id_prod,$id_user,$puntos,$comentario){//Metodo para añadir valoracion de un producto
             try{
+                $this->db->beginTransaction();
                 $sql="INSERT INTO valoracion (ID_PRODCUTO, ID_USUARIO, PUNTUACION, COMENTARIOS)
                         VALUES(:id_p,:id_u,:puntos,:comen)";
                 $stmt = $this->db->prepare($sql);
@@ -216,8 +260,58 @@
                 $stmt->bindValue(':puntos', $puntos, PDO::PARAM_INT);
                 $stmt->bindValue(':comen', $comentario, PDO::PARAM_STR);
                 return $stmt->execute();
+
+                $this->db->commit();
             }catch(PDOException $e){
+                if($this->db->inTransaction()){
+                    $this->db->rollBack();
+                }
                 die("Error al guardar valoracion: ".$e->getMessage());
+            }
+        }
+
+        public function registrarCompra($id_user,$fecha,$total,$estado,$direccion,$pago,$carrito){
+            try{
+                $this->db->beginTransaction();
+                //Insertamos los pedidos
+                $sql="INSERT INTO pedidos (ID_USUARIO,FECHA,TOTAL,ESTADO,DIRECCION_ENVIO,METODO_PAGO)
+                        VALUES(:id_u,:fecha,:total,:estado,:direccion,:pago)";
+                $stmt = $this->db->prepare($sql);
+                $stmt->bindValue(':id_u', $id_user, PDO::PARAM_INT);
+                $stmt->bindValue(':fecha', $fecha, PDO::PARAM_STR);
+                $stmt->bindValue(':total', $total, PDO::PARAM_STR);
+                $stmt->bindValue(':estado', $estado, PDO::PARAM_STR);
+                $stmt->bindValue(':direccion', $direccion, PDO::PARAM_STR);
+                $stmt->bindValue(':pago', $pago, PDO::PARAM_STR);
+                
+                $stmt->execute();
+                $id_pedido=$this->db->lastInsertId();
+
+                //Insertamos el detalle de cada pedido
+                $sql="INSERT INTO detalles_pedido (ID_PEDIDO, ID_PRODUCTO, TALLA, PARCHE, CANTIDAD, PRECIO_UNITARIO, DORSAL, NOMBRE_PERSONALIZADO)
+                       VALUES (:id_pedido, :id_prod, :talla, :parche, :cantidad, :precio, :dorsal, :nombre_p)";
+                $stmt = $this->db->prepare($sql);
+
+                foreach($carrito as $c){//Recorremos todo el carrito para añadirlo al detalle del pedido
+                    $stmt->bindValue(':id_pedido', $id_pedido, PDO::PARAM_INT);
+                    $stmt->bindValue(':id_prod', $c['id'], PDO::PARAM_INT);
+                    $stmt->bindValue(':talla', $c['talla'], PDO::PARAM_STR);
+                    $stmt->bindValue(':parche', $c['parche'] ?? 'Sin Parche', PDO::PARAM_STR);
+                    $stmt->bindValue(':cantidad', $c['cantidad'] ?? 1, PDO::PARAM_INT);
+                    $stmt->bindValue(':precio', $c['precio'], PDO::PARAM_STR);
+
+                    $stmt->bindValue(':dorsal',    $c['numero'] ?? null, PDO::PARAM_STR);
+                    $stmt->bindValue(':nombre_p',  $c['nombre_personalizado'] ?? null, PDO::PARAM_STR);
+
+                    $stmt->execute();
+                }
+
+                $this->db->commit();
+            }catch(PDOException $e){
+                if($this->db->inTransaction()){
+                    $this->db->rollBack();
+                }
+                die("Error al Guardar el pedido : ".$e->getMessage());
             }
         }
         

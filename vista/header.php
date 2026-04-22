@@ -68,11 +68,10 @@
                 <?php if($rol_actual === 'admin'): ?>
                     <div class="dropdown">
                         <img src="<?=$foto_perfil ?>" alt="Perfil" class="img-perfil">
-
                         <div class="dropdown-content">
-                            <a href="index.php?action=configuracion">Configuracion</a>
-                            <a href="index.php?action=AnadirProducto">Añadir Producto </a>
-                            <a href="index.php?action=GestionProductos">Gestionar Productos</a>
+                            <a href="index.php?action=configuracion"><i class="fas fa-cog"></i> Configuración</a>
+                            <a href="index.php?action=AnadirProducto"><i class="fas fa-plus-circle"></i> Añadir Producto</a>
+                            <a href="index.php?action=GestionProductos"><i class="fas fa-tasks"></i> Gestionar Productos</a>
                         </div>
                     </div>
                     <a href="?action=logout" title="Cerrar Sesión"><i class="fas fa-sign-out-alt"></i></a>
@@ -80,16 +79,12 @@
                 <?php elseif($rol_actual === 'cliente'): ?>
                     <div class="dropdown">
                         <img src="<?=$foto_perfil ?>" alt="Perfil" class="img-perfil">
-
                         <div class="dropdown-content">
-                            <a href="index.php?action=configuracion">Configuracion</a>
-                            <a href="index.php?action=pedidos">Pedidos</a>
-                            <a href="index.php?action=valoraciones">Valoraciones</a>
+                            <a href="index.php?action=configuracion"><i class="fas fa-user-edit"></i> Configuración</a>
+                            <a href="index.php?action=pedidos"><i class="fas fa-box-open"></i> Mis Pedidos</a>
+                            <a href="index.php?action=valoraciones"><i class="fas fa-star"></i> Valoraciones</a>
                         </div>
                     </div>
-                    <a href="?action=verCarrito"><i class="fas fa-shopping-cart"></i></a>
-                    <a href="?action=logout" title="Cerrar Sesión"><i class="fas fa-sign-out-alt"></i></a>
-
                 <?php else: ?>
                     <a href="?action=login" title="Iniciar Sesión"><i class="fas fa-user"></i></a>
                 <?php endif; ?>

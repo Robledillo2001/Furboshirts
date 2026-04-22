@@ -1,10 +1,11 @@
-/* --- ESTILOS DEL CARRUSEL --- */
+/* =====================================================
+   HERO CAROUSEL
+   ===================================================== */
 .carousel {
     position: relative;
     width: 100%;
-    max-height: 500px;
     overflow: hidden;
-    background-color: #000;
+    background-color: #0d1a10;
 }
 
 .carousel-container {
@@ -13,10 +14,10 @@
 }
 
 .slide {
-    display: none; /* Ocultos por defecto */
+    display: none;
     position: relative;
     width: 100%;
-    animation: fade 0.8s ease-in-out;
+    animation: fade 0.9s ease-in-out;
 }
 
 .slide.active {
@@ -25,154 +26,301 @@
 
 .slide img {
     width: 100%;
-    height: 500px;
-    object-fit: cover; /* Ajusta la imagen sin deformarla */
-    filter: brightness(60%); /* Oscurece un poco la imagen para que el texto resalte */
+    height: 560px;
+    object-fit: cover;
+    filter: brightness(60%);
+    display: block;
 }
 
-/* Contenido del Slide */
+.slide::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(105deg,
+        rgba(0,0,0,0.6) 0%,
+        rgba(26,82,36,0.35) 45%,
+        transparent 80%);
+    pointer-events: none;
+}
+
 .slide-content {
     position: absolute;
     top: 50%;
-    left: 25%;
+    left: 8%;
     transform: translateY(-50%);
-    color: #fcf6ed;
+    color: #fff;
+    z-index: 2;
+    max-width: 540px;
 }
 
 .slide-content h2 {
-    font-size: 3rem;
+    font-size: 3.4rem;
+    font-weight: 900;
     text-transform: uppercase;
-    margin-bottom: 10px;
-    color: #fcf6ed; /* Tu verde deportivo */
+    letter-spacing: 1px;
+    margin-bottom: 16px;
+    line-height: 1.1;
+    text-shadow: 0 3px 16px rgba(0,0,0,0.5);
+}
+
+.slide-content p {
+    font-size: 1.1rem;
+    color: rgba(255,255,255,0.9);
+    line-height: 1.65;
+    margin-bottom: 32px;
+    text-shadow: 0 1px 8px rgba(0,0,0,0.4);
+    max-width: 420px;
 }
 
 .btn-shop {
-    display: inline-block;
-    padding: 12px 25px;
-    background-color:#fcf6ed;
-    color: #21632a;
-    text-decoration: none;
-    font-weight: bold;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 15px 36px;
+    background: linear-gradient(135deg, var(--verde-claro), var(--verde-hover));
+    color: #fff;
+    font-weight: 800;
     text-transform: uppercase;
-    margin-top: 20px;
-    border-radius: 5px;
-    transition: 0.3s;
+    font-size: 0.92rem;
+    letter-spacing: 1px;
+    border-radius: var(--radio-pill);
+    transition: all 0.3s ease;
+    box-shadow: 0 6px 24px rgba(80, 185, 94, 0.5);
+    text-decoration: none;
 }
 
 .btn-shop:hover {
-    background-color: #21632a;
-    color: #fff;
-    transform: scale(1.05);
+    background: #fff;
+    color: var(--verde-medio);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 32px rgba(0,0,0,0.25);
 }
 
-/* Flechas */
+/* Carousel arrows */
 .prev, .next {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    background: rgba(0,0,0,0.5);
-    color: #fcf6ed;
-    padding: 15px;
-    border: none;
+    background: rgba(255,255,255,0.12);
+    backdrop-filter: blur(8px);
+    color: #fff;
+    width: 52px;
+    height: 52px;
+    border: 1.5px solid rgba(255,255,255,0.3);
+    border-radius: 50%;
     cursor: pointer;
-    font-size: 20px;
-    transition: 0.3s;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    z-index: 3;
 }
 
-.prev { left: 0; border-radius: 0 5px 5px 0; }
-.next { right: 0; border-radius: 5px 0 0 5px; }
+.prev { left: 28px; }
+.next { right: 28px; }
 
 .prev:hover, .next:hover {
-    color: #21632a;
+    background: rgba(255,255,255,0.28);
+    transform: translateY(-50%) scale(1.1);
+    border-color: rgba(255,255,255,0.5);
 }
 
-/* Puntos */
+/* Dots */
 .dots-container {
     text-align: center;
     position: absolute;
-    bottom: 20px;
+    bottom: 24px;
     width: 100%;
-    z-index: 10; /* Asegura que estén por encima de la imagen */
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
 }
 
 .dot {
-    height: 14px; /* Un pelín más grandes para que se vean mejor */
-    width: 14px;
-    margin: 0 6px;
-    background-color: rgba(255, 255, 255, 0.5); /* Blanco semi-transparente cuando no están activos */
-    border: 2px solid #fff; /* Borde sólido para que no se pierdan */
+    height: 8px;
+    width: 8px;
+    background-color: rgba(255,255,255,0.45);
     border-radius: 50%;
     display: inline-block;
     cursor: pointer;
     transition: all 0.3s ease;
-    opacity: 1 !important; /* Forzamos que no sean transparentes por herencia */
 }
 
 .dot.active {
-    background-color: #21632a; /* Usamos el verde brillante que definimos al principio */
-    border-color: #21632a;
-    transform: scale(1.2); /* Crece un poquito el punto activo para que se note el cambio */
-    box-shadow: 0 0 10px rgba(7, 119, 35, 0.6); /* Un pequeño resplandor tipo "neón" deportivo */
+    background-color: var(--verde-claro);
+    width: 30px;
+    border-radius: 4px;
+    box-shadow: 0 0 10px rgba(80, 185, 94, 0.7);
 }
 
-.dot:hover {
-    background-color: #21632a; /* Se iluminan al pasar el mouse */
+.dot:hover:not(.active) {
+    background-color: rgba(255,255,255,0.8);
+    transform: scale(1.2);
 }
-/* Animación de fundido */
+
 @keyframes fade {
-    from { opacity: 0.4; }
-    to { opacity: 1; }
+    from { opacity: 0; transform: scale(1.03); }
+    to   { opacity: 1; transform: scale(1); }
 }
 
-/* Contenedor Principal de los servicios*/
+/* =====================================================
+   SERVICE BANNER
+   ===================================================== */
 .servicios-container {
     display: flex;
-    flex-wrap: wrap; /* Para que bajen si no caben */
+    flex-wrap: wrap;
     justify-content: center;
-    gap: 20px;
-    padding: 40px 5%;
+    gap: 0;
+    background-color: #fff;
+    border-bottom: 1px solid var(--gris-borde);
 }
 
-/* Tarjeta Individual */
 .servicio-card {
-    background-color: #fcf6ed; /* Un gris muy clarito para separar secciones */
     display: flex;
-    flex-direction: column;
     align-items: center;
-    gap: 15px;
-    padding: 20px;
-    border-radius: 8px;
-    flex: 1; /* Todas miden lo mismo */
-    min-width: 250px; /* Evita que se compriman demasiado */
-    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    border-bottom: 3px solid transparent;
+    gap: 18px;
+    padding: 28px 36px;
+    flex: 1;
+    min-width: 220px;
+    border-right: 1px solid var(--gris-borde);
+    transition: background-color 0.3s ease;
+    cursor: default;
+}
+
+.servicio-card:last-child {
+    border-right: none;
 }
 
 .servicio-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 15px rgba(0,0,0,0.1);
-    border-bottom: 3px solid #fcf6ed; /* El verde de tu marca */
+    background-color: rgba(33, 99, 42, 0.03);
 }
 
-/* Iconos */
 .servicio-card i {
-    font-size: 2rem;
-    color: #21632a;
-    width: 50px;
-    text-align: center;
+    font-size: 1.5rem;
+    color: var(--verde-medio);
+    background: linear-gradient(135deg, rgba(80,185,94,0.18), rgba(33,99,42,0.08));
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: transform 0.3s ease;
 }
 
-/* Textos */
+.servicio-card:hover i {
+    transform: scale(1.15) rotate(-6deg);
+}
+
 .servicio-info h3 {
-    font-size: 1rem;
+    font-size: 0.88rem;
+    font-weight: 700;
     text-transform: uppercase;
-    margin-bottom: 5px;
-    color: #21632a;
+    letter-spacing: 0.4px;
+    color: var(--texto-oscuro);
+    margin-bottom: 3px;
 }
 
 .servicio-info p {
-    font-size: 0.85rem;
-    color: #666;
+    font-size: 0.8rem;
+    color: var(--texto-suave);
     margin: 0;
+    line-height: 1.4;
+}
+
+/* =====================================================
+   PROMO BANNER
+   ===================================================== */
+.promo-banner {
+    background: linear-gradient(135deg, var(--verde-oscuro) 0%, #1a6b2a 60%, #2d8a3e 100%);
+    padding: 56px 5%;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.promo-banner::before {
+    content: '';
+    position: absolute;
+    top: -80px;
+    left: -80px;
+    width: 320px;
+    height: 320px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 50%;
+}
+
+.promo-banner::after {
+    content: '';
+    position: absolute;
+    bottom: -60px;
+    right: -60px;
+    width: 250px;
+    height: 250px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 50%;
+}
+
+.promo-banner-content {
+    position: relative;
+    z-index: 1;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.promo-badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    color: rgba(255,255,255,0.95);
+    padding: 5px 18px;
+    border-radius: 50px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+}
+
+.promo-banner h2 {
+    font-size: 2.4rem;
+    font-weight: 900;
+    color: #fff;
+    margin-bottom: 12px;
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+}
+
+.promo-banner p {
+    color: rgba(255,255,255,0.8);
+    font-size: 1rem;
+    line-height: 1.65;
+    margin-bottom: 28px;
+}
+
+.btn-promo {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: #fff;
+    color: var(--verde-oscuro);
+    padding: 14px 34px;
+    border-radius: var(--radio-pill);
+    font-weight: 800;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+}
+
+.btn-promo:hover {
+    background: var(--verde-claro);
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(0,0,0,0.25);
 }
