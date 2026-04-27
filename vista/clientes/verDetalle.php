@@ -146,6 +146,43 @@
                 </button>
             </form>
         </div>
+        <?php if (isset($_SESSION['mensaje'])): ?>
+            <script>
+                alert("<?= $_SESSION['mensaje'] ?>");
+            </script>
+            <?php unset($_SESSION['mensaje']); // Limpiamos el mensaje para que no salga otra vez ?>
+        <?php endif; ?>
+
+        <div class="product-reviews-list" style="margin-top:40px;">
+            <h3 style="font-size:1.2rem; border-bottom:2px solid #eee; padding-bottom:10px;">Opiniones de clientes</h3>
+
+            <?php if (empty($valoraciones)): ?>
+                <p>Aún no hay comentarios.</p>
+            <?php else: ?>
+                <?php foreach ($valoraciones as $v): ?>
+                    <div class="review-card" style="display:flex; gap:15px; margin-bottom:20px; background:#fff; padding:15px; border-radius:10px; box-shadow:0 2px 5px rgba(0,0,0,0.05);">
+                        
+                        <img src="<?= !empty($v['IMAGEN_USER']) ? $v['IMAGEN_USER'] : 'assets/img/default-avatar.png' ?>" 
+                            style="width:50px; height:50px; border-radius:50%; object-fit:cover;">
+
+                        <div style="flex:1;">
+                            <div style="display:flex; justify-content:space-between;">
+                                <strong style="font-size:0.9rem;"><?= htmlspecialchars($v['NOMBRE_USUARIO']) ?></strong>
+                                <div style="color:var(--verde-medio); font-size:0.8rem;">
+                                    <?php for ($i = 1; $i <= 5; $i++): ?>
+                                        <i class="<?= $i <= $v['PUNTUACION'] ? 'fas' : 'far' ?> fa-star"></i>
+                                    <?php endfor; ?>
+                                </div>
+                            </div>
+                            <p style="font-size:0.85rem; color:#555; margin-top:5px;">
+                                <?= nl2br(htmlspecialchars($v['COMENTARIOS'])) ?>
+                            </p>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            <?php endif; ?>
+        </div>
+
     </div>
 </div>
 

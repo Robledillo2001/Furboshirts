@@ -8,22 +8,22 @@ include __DIR__ . '/../header.php';
         <form action="index.php?action=EditarPerfil" method="POST">
             <div class="input-group">
                 <label for="nombre">Nombre</label>
-                <input type="text" name="nombre" id="nombre" placeholder="<?= $_SESSION['nombre_real'] ?>">
+                <input type="text" name="nombre" id="nombre" value="<?= $_SESSION['nombre_real'] ?>">
             </div>
 
             <div class="input-group">
                 <label for="apellidos">Apellidos</label>
-                <input type="apellidos" name="apellidos" id="apellidos" placeholder="<?= $_SESSION['apellidos'] ?>">
+                <input type="apellidos" name="apellidos" id="apellidos" value="<?= $_SESSION['apellidos'] ?>">
             </div>
 
             <div class="input-group">
                 <label for="nombreUser">Nombre de Usuario</label>
-                <input type="text" name="nombreUser" id="nombreUser" placeholder="<?= $_SESSION['nombre'] ?>">
+                <input type="text" name="nombreUser" id="nombreUser" value="<?= $_SESSION['nombre'] ?>">
             </div>
 
             <div class="input-group">
                 <label for="correo">Correo</label>
-                <input type="email" name="correo" id="correo" placeholder="<?= $_SESSION['correo'] ?>">
+                <input type="email" name="correo" id="correo" value="<?= $_SESSION['correo'] ?>">
             </div>
 
             <div class="input-group">

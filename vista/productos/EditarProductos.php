@@ -11,11 +11,11 @@ include __DIR__ . '/../header.php';
             <div class="fila-form">
                 <div class="input-group flex-2">
                     <label for="nombre">Nombre del Producto</label>
-                    <input type="text" id="nombre" name="nombre" placeholder="Ej: Camiseta Local 24/25" >
+                    <input type="text" id="nombre" name="nombre" placeholder="Ej: Camiseta Local 24/25" value="<?= $producto['NOMBRE'] ?>">
                 </div>
                 <div class="input-group flex-1">
                     <label for="precio">Precio (€)</label>
-                    <input type="number" id="precio" name="precio" step="0.01" placeholder="0.00" >
+                    <input type="number" id="precio" name="precio" step="0.01" placeholder="0.00" value="<?= $producto['PRECIO'] ?>">
                 </div>
             </div>
 
@@ -25,7 +25,7 @@ include __DIR__ . '/../header.php';
                     <select name="categoria" id="categoria" >
                         <option value="">Seleccione Prenda...</option>
                         <?php foreach($categorias as $cat): ?>
-                            <option value="<?= $cat['ID_CAT'] ?>"><?= $cat['PRENDA'] ?></option>
+                            <option value="<?= $cat['ID_CAT'] ?>" <?= $cat['ID_CAT'] == $producto['ID_CAT'] ? 'selected' : '' ?>><?= $cat['PRENDA'] ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -34,7 +34,7 @@ include __DIR__ . '/../header.php';
                     <select name="deporte" id="deporte">
                         <option value="">Seleccione Deporte</option>
                         <?php foreach($deportes as $d): ?>
-                            <option value="<?= $d['ID_DEPORTE'] ?>"><?= $d['DEPORTE'] ?></option>
+                            <option value="<?= $d['ID_DEPORTE'] ?>" <?= $d['ID_DEPORTE'] == $producto['ID_DEPORTE'] ? 'selected' : '' ?>><?= $d['DEPORTE'] ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -43,33 +43,41 @@ include __DIR__ . '/../header.php';
                     <select name="equipo" id="equipo" >
                         <option value="">Seleccione Entidad...</option>
                         <?php foreach($equipos as $equipo): ?>
-                            <option value="<?= $equipo['ID_EQUIPO'] ?>"><?= $equipo['NOMBRE_EQUIPO'] ?></option>
+                            <option value="<?= $equipo['ID_EQUIPO'] ?>" <?= $equipo['ID_EQUIPO'] == $producto['ID_EQUIPO'] ? 'selected' : '' ?>><?= $equipo['NOMBRE_EQUIPO'] ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
                 <div class="input-group flex-0-5">
                     <label for="ano">Año edición</label>
-                    <input type="number" id="anio" name="anio" placeholder="2024">
+                    <input type="number" id="anio" name="anio" placeholder="2024" value="<?= $producto['ANO_EDICION'] ?>">
                 </div>
             </div>
 
             <div class="input-group">
                 <label for="desc">Descripción Corta</label>
-                <textarea id="desc" name="desc" rows="2" placeholder="Breve resumen del producto..."></textarea>
+                <textarea id="desc" name="desc" rows="2" placeholder="Breve resumen del producto..."><?= $producto['DESCRIPCION'] ?></textarea>
             </div>
 
             <div class="input-group">
                 <label for="caracteristicas">Características Técnicas</label>
-                <textarea id="caracteristicas" name="caracteristicas" rows="4" placeholder="Material, tecnología, detalles del bordado..."></textarea>
+                <textarea id="caracteristicas" name="caracteristicas" rows="4" placeholder="Material, tecnología, detalles del bordado..."><?= $producto['CARACTERISTICAS'] ?></textarea>
             </div>
 
             <div class="tallas-seccion">
                 <label class="tallas-titulo">Stock por Tallas</label>
                 <div class="tallas-grid">
-                    <?php foreach($tallas as $talla): ?>
+                    <?php foreach($tallas as $talla): 
+                        // Buscamos si esta talla tiene stock guardado para este producto
+                        $id_talla = $talla['ID_TALLA'];
+                        $cantidadStock = isset($stocksActuales[$id_talla]) ? $stocksActuales[$id_talla] : 0;
+                    ?>
                     <div class="talla-item">
-                        <label for="talla_<?= $talla['ID_TALLA'] ?>"><?= $talla['TALLA'] ?></label>
-                        <input type="number" name="tallas[<?= $talla['ID_TALLA'] ?>]" id="talla_<?= $talla['ID_TALLA'] ?>" min="0" value="0">
+                        <label for="talla_<?= $id_talla ?>"><?= $talla['TALLA'] ?></label>
+                        <input type="number" 
+                            name="tallas[<?= $id_talla ?>]" 
+                            id="talla_<?= $id_talla ?>" 
+                            min="0" 
+                            value="<?= $cantidadStock ?>">
                     </div>
                     <?php endforeach; ?>
                 </div>
@@ -77,6 +85,11 @@ include __DIR__ . '/../header.php';
 
 
             <div class="fila-form">
+                <?php foreach ($imagenes as $img): ?>
+                    <div class="img-container">
+                        <img src="<?= $img['RUTA'] ?>" width="80">
+                    </div>
+                <?php endforeach; ?>
                 <div class="input-group flex-1">
                     <label for="imagen1">Imagen Principal</label>
                     <input type="file" id="imagen1" name="imagen1" accept="image/*">
@@ -92,7 +105,7 @@ include __DIR__ . '/../header.php';
             <div class="btn">
                 <div class="acciones-form">
                     <button type="submit" class="btn-login">Guardar</button>
-                    <a href="index.php?action=GestionTemporadas"><button class="btn-login">Cancelar</button></a>
+                    <a href="index.php?action=GestionProductos">Cancelar</a>
                 </div>
             </div>
         </form>

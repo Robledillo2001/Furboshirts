@@ -26,7 +26,7 @@
                 <i class="fas fa-history"></i> Historial de Pedidos
             </a>
             <hr>
-            <a href="index.php?action=GestionTienda">
+            <a href="index.php?action=MenuAdmin">
                 <i class="fas fa-arrow-left"></i> Volver al Panel
             </a>
         </nav>
@@ -35,16 +35,16 @@
     <main class="contenido-gestion">
         <div class="container-tabla">
             <div class="header-seccion">
-                <h2 class="titulo-seccion">Competiciones y Logos</h2>
+                <h2 class="titulo-seccion">Temporadas</h2>
                 <div class="botones-header">
                     <a href="index.php?action=AnadirCompeticiones" class="btn-anadir">
-                        <i class="fas fa-trophy"></i> Asignar Competiciones
+                        <i class="fas fa-shield-alt"></i> Asignar Competiciones
                     </a>
-                    <a href="index.php?action=EliminarCompeticiones" class="btn-anadir">
-                        <i class="fas fa-trash"></i> Eliminar Competiciones
+                    <a href="index.php?action=MostrarCompeticiones" class="btn-anadir">
+                        <i class="fas fa-trophy"></i> Mostrar Competiciones
                     </a>
-                    <a href="index.php?action=EliminarLogos" class="btn-anadir">
-                        <i class="fas fa-trash"></i> Eliminar Logos
+                    <a href="index.php?action=MostrarLogos" class="btn-anadir">
+                        <i class="fas fa-tag"></i> Mostrar Logos
                     </a>
                 </div>
             </div>

@@ -206,7 +206,25 @@
 .icons {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 6px;
+}
+
+.icons a {
+    color: var(--verde-oscuro);
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 1.15rem;
+    transition: color var(--transicion), background-color var(--transicion), transform var(--transicion);
+}
+
+.icons a:hover {
+    color: var(--verde-medio);
+    background-color: rgba(33, 99, 42, 0.08);
+    transform: scale(1.08);
 }
 
 .icons .dropdown-content a {
@@ -226,8 +244,8 @@
 }
 
 .icons .dropdown-content a i {
-    width: 40px; /* Ancho fijo para que los iconos del menú se alineen */
-    font-size: 2rem;
+    width: 20px; /* Ancho fijo para que los iconos del menú se alineen */
+    font-size: 1rem;
 }
 
 .icons .dropdown-content a:hover {

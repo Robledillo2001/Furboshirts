@@ -91,6 +91,7 @@
                 $imagenes = [];
                 $parches = [];
                 $tallas = [];
+                $valoraciones = $modelo->obtenerValoracionesPorProductos($id);
                 $valoracion_promedio = $producto['VALORACION_PROMEDIO'] ?? 0; // Extraer la media
                 $prenda=$modelo->comprobarCaTegoria($producto['ID_CAT']);//Llamamos a la categoria para comprobar el tipo de prenda
 
@@ -118,6 +119,7 @@
                             $tallas[$fila['NOMBRE_TALLA']] = (int)$fila['ID_TALLA'];//Guardamos el nombre de la talla con el id de la misma comom valor
                         }
                     }
+
 
                 }
 
@@ -259,12 +261,70 @@
                 $comentario  = $_POST['comentario']??'';
                 $id_usuario  = $_SESSION['id']; // Usamos tu variable de sesión
 
-                $modelo->insertarValoracion($id_producto, $id_usuario, $puntuacion, $comentario);
+                if ($modelo->yaHaValorado($id_usuario, $id_producto)) {
+                    $_SESSION['mensaje'] = "Ya has valorado este producto anteriormente.";
+                    header("Location: index.php?action=verDetalle&id=$id_producto&anio=$anio");
+                    exit();
+                }
+
+                $resultado=$modelo->insertarValoracion($id_producto, $id_usuario, $puntuacion, $comentario);
+
+                if ($resultado) {
+                    $_SESSION['mensaje'] = $resultado;
+                } else {
+                    $_SESSION['mensaje'] = "Error al guardar la valoración.";
+                }
+
                 // Redirigir de vuelta al producto
-                header("Location: index.php?action=verDetalle&id=$id_producto&anio=$anio");
+                header("Location: index.php?action=VerDetalle&id=$id_producto&anio=$anio");
+                exit();
             }
             //Fallback: Si alguien entra aquí mal, lo mandamos al catálogo
             header("Location: index.php?action=mostrarCatalogo");
+        }
+
+        public function VerPedidos(){//Metodo para ver los Pedidos de los clientes
+            $this->comprobarCliente();//Comprobamos que el usario este registrado al meter una valoracion
+
+            $modelo=new Cliente();
+
+            //Configuracion de la paginacion
+            $pedidos = 5;
+            $paginaActual = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
+            if($paginaActual < 1) $paginaActual = 1;
+
+            $inicio=($paginaActual-1)*$pedidos;
+
+            //Obtener los datos del modelo
+            $totalProductos = $modelo->ContarPedidos($_SESSION['id']);
+            $totalPaginas = ceil($totalProductos / $pedidos);
+
+            //Obtenemos todos las Tallas de la pagina
+            $pedidosPag=$modelo->mostrarPedidos($inicio,$pedidos,$_SESSION['id']);
+
+            require_once "vista/clientes/verPedidos.php";
+        }
+
+        public function Vervaloraciones(){//Metodo para ver las valoraciones de los clientes
+            $this->comprobarCliente();//Comprobamos que el usario este registrado al meter una valoracion
+
+            $modelo=new Cliente();
+
+            //Configuracion de la paginacion
+            $valoraciones = 5;
+            $paginaActual = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
+            if($paginaActual < 1) $paginaActual = 1;
+
+            $inicio=($paginaActual-1)*$valoraciones;
+
+            //Obtener los datos del modelo
+            $totalProductos = $modelo->ContarValoraciones($_SESSION['id']);
+            $totalPaginas = ceil($totalProductos / $valoraciones);
+
+            //Obtenemos todos las Tallas de la pagina
+            $valoracionesPag=$modelo->mostrarValoraciones($inicio,$valoraciones,$_SESSION['id']);
+
+            require_once "vista/clientes/verValoraciones.php";
         }
     }
 ?>

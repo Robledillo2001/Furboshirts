@@ -9,11 +9,15 @@ include __DIR__ . '/../header.php';
                 <?php echo $error; ?>
             </div>
         <?php endif; ?>
-        <h2><i class="fas fa-tags"></i>Editar Talla</h2>
-        <form action="index.php?action=EditarTallas&id=<?=$_GET['id']; ?>" method="POST">
+        <h2><i class="fas fa-tag"></i>Editar Logo</h2>
+        <form action="index.php?action=EditarLogos&id=<?=$_GET['id']; ?>" method="POST" enctype="multipart/form-data">
             <div class="input-group">
-                <label for="talla">Talla</label>
-                <input type="text" name="talla" id="talla" value="<?= $talla['TALLA'] ?>" required>
+                <label for="imagen">Editar Logo</label>
+                <?php if (isset($logo['PARCHE'])): ?>
+                    <img src="<?= $logo['PARCHE'] ?>" alt="Logo actual" style="width: 50px; display: block; margin-bottom: 10px;">
+                <?php endif; ?>
+                <input type="file" id="imagen" name="imagen" accept="image/*" required>
+                <small style="color:#f4f4f4;">Formatos permitidos: JPG, PNG, WEBP.</small>
             </div>
 
             <div class="acciones-form">

@@ -146,6 +146,9 @@
             }
             // Métodos del modelo para llenar los select del formulario
             $id_editar = $_GET['id'];
+            $producto=$modelo->MostrarProducto($id_editar);//Metodo para mostrar datos del producto mediante ID
+            $stocksActuales = $modelo->ObtenerStockTallas($id_editar);//Obtener el stock de las tallas
+            $imagenes = $modelo->ObtenerImagenesProducto($id_editar);//Metodo para obtener las imagenes de cada Producto
             $producto = $modelo->obtenerProductoPorId($id_editar);
             $categorias = $modelo->obtenerCategorias();
             $equipos = $modelo->obtenerEquipos();
@@ -224,6 +227,8 @@
         public function EditarCategoria(){//Metodo para editar categorias
             $this->checkAdmin();
             $modelo=new Productos();
+            $categoria=$modelo->MostrarCategoria($_GET['id']);//Metodo para mostrar datos de la categoria mediante ID
+
             if(isset($_GET['id'])&&$_SERVER['REQUEST_METHOD']=='POST'){//Sacamos los datos del id de la categoria a actualizar y los datos del form
                 $id_categoria=$_GET['id'];
                 $prenda=$_POST['prenda'];
@@ -406,6 +411,7 @@
         public function EditarED() {
             $this->checkAdmin();
             $modelo = new Productos();
+            $ED=$modelo->MostrarED($_GET['id']);//Metodo para mostrar datos de la ENTIDAD DEPORTIVA mediante ID
 
             if (isset($_GET['id']) && $_SERVER['REQUEST_METHOD'] === 'POST') {
                 $id_equipo = $_GET['id'];
@@ -484,18 +490,7 @@
             $this->checkAdmin();
 
             if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-                // 1. Ver si $_FILES tiene algo
-                if (empty($_FILES)) {
-                    die("Error: El array \$_FILES está vacío. Esto suele ser porque falta el 'enctype' en el <form>.");
-                }
-
-                // 2. Ver si hay un error específico
-                if (isset($_FILES['imagen']) && $_FILES['imagen']['error'] !== UPLOAD_ERR_OK) {
-                    die("Error de PHP al subir: " . $_FILES['imagen']['error'] . 
-                        " (Si es 4, es que no llegó el archivo. Si es 1, es tamaño).");
-                }
-
-                // 3. Si todo parece bien, intentar moverlo
+                // Si todo parece bien, intentar moverlo
                 if (isset($_FILES['imagen'])) {
                     $nombreImg = $_FILES['imagen']['name'];
                     $rutaTemporal = $_FILES['imagen']['tmp_name'];
@@ -520,34 +515,124 @@
             require_once "vista/productos/AnadirLogos.php";
         }
 
+        public function MostrarCompeticiones(){//Metodo para mostrar las competiciones mediante paginacion
+            $this->checkAdmin();
+
+            //Configuracion de la paginacion
+            $modelo=new Productos();
+            $competiciones=5;
+
+            $paginaActual = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
+            if($paginaActual < 1) $paginaActual = 1;
+
+            $inicio=($paginaActual-1)*$competiciones;
+
+            //Obtener los datos del modelo
+            $totalProductos = $modelo->contarCompeticiones();
+            $totalPaginas = ceil($totalProductos / $competiciones);
+
+            //Obtenemos todos las Competiciones
+            $compPag=$modelo->mostrarCompeticiones($inicio,$competiciones);
+
+            //Cargar la vista con las COmpeticiones y Logos
+            require_once "vista/productos/mostrarComp.php";
+        }
+
+        public function MostrarLogos(){//Metodo para mostrar los Parches mediante paginacion
+            $this->checkAdmin();
+
+            //Configuracion de la paginacion
+            $modelo=new Productos();
+            $logos=5;
+
+            $paginaActual = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
+            if($paginaActual < 1) $paginaActual = 1;
+
+            $inicio=($paginaActual-1)*$logos;
+
+            //Obtener los datos del modelo
+            $totalProductos = $modelo->contarLogos();
+            $totalPaginas = ceil($totalProductos / $logos);
+
+            //Obtenemos todos los Logos de la pagina
+            $logosPag=$modelo->mostrarLogos($inicio,$logos);
+
+            //Cargar la vista con las COmpeticiones y Logos
+            require_once "vista/productos/mostrarLogos.php";
+        }
+
+        public function EditarCompeticiones(){//Metodo para editar una competicion
+            $this->checkAdmin();
+            $modelo= new Productos();
+            $competicion=$modelo->MostrarComp($_GET['id']);
+            if($_SERVER['REQUEST_METHOD']=='POST'&& isset($_GET['id'])){
+                $id_comp=$_GET['id'];
+                $nombre=$_POST['comp'];
+                $tipo=$_POST['tipo'];
+
+                $modelo->editarCompeticion($id_comp,$nombre,$tipo);
+                header("Location: index.php?action=MostrarCompeticiones");
+                exit();
+            }
+            require_once "vista/productos/EditarCompeticiones.php";
+        }
+
         public function EliminarCompeticiones(){//Metodo para eliminar las competiciones
             $this->checkAdmin();
-            $modelo=new Productos();
-            if($_SERVER['REQUEST_METHOD']=='POST'){
-                $id_comp=$_POST['comp'];
+            $modelo= new Productos();
+            if(isset($_GET['id'])){
+                $id_comp=$_GET['id'];
 
                 $modelo->eliminarCompeticiones($id_comp);
 
-                header("Location: index.php?action=GestionTemporadas");
+                header("Location: index.php?action=MostrarCompeticiones");
                 exit();
             }
-            $competiciones=$modelo->ListarCompeticiones();
-            require_once "vista/productos/eliminarCompeticion.php";
+        }
+
+        public function EditarLogos(){//Metodo para editar la ruta de un Parche
+            $this->checkAdmin();
+            $modelo= new Productos();
+            $logo = $modelo->MostrarLogo($_GET['id']);
+
+            if($_SERVER['REQUEST_METHOD']=='POST'&& isset($_GET['id'])){//Procesamos los datos del form
+                $id_logo=$_GET['id'];
+
+                if (isset($_FILES['imagen'])) {//Comprobamos que haya si hay alguna imagen
+                    $nombreImg = $_FILES['imagen']['name'];
+                    $rutaTemporal = $_FILES['imagen']['tmp_name'];
+                    $carpetaDestino = "assets/img/parches/";
+
+                    if (!file_exists($carpetaDestino)) {
+                        mkdir($carpetaDestino, 0777, true);
+                    }
+
+                    $rutaFinal = $carpetaDestino . time() . "_" . $nombreImg;
+
+                    if (move_uploaded_file($rutaTemporal, $rutaFinal)) {
+                        $modelo = new Productos();
+                        $modelo->editarLogo($id_logo,$rutaFinal);
+                        header("Location: index.php?action=MostrarLogos");
+                        exit();
+                    } else {
+                        die("Error: No se pudo mover el archivo. ¿Existe la carpeta assets/img/parches/?");
+                    }
+                }
+            }
+            require_once "vista/productos/EditarLogos.php";
         }
 
         public function EliminarLogos(){//Metodo para eliminar Logos
             $this->checkAdmin();
             $modelo=new Productos();
-            if($_SERVER['REQUEST_METHOD']=='POST'){
-                $id_logo=$_POST['logo'];
+            if(isset($_GET['id'])){
+                $id_logo=$_GET['id'];
 
                 $modelo->eliminarLogos($id_logo);
 
-                header("Location: index.php?action=GestionTemporadas");
+                header("Location: index.php?action=MostrarLogos");
                 exit();
             }
-            $logos=$modelo->ListarParches();
-            require_once "vista/productos/eliminarLogo.php";
         }
 
         public function AsignarEquipos() {//Metodo para asignar una temporada a un equipo con su competicion y logs especificos
@@ -714,6 +799,8 @@
         public function EditarTallas(){//Metodo para añadir tallas
             $this->checkAdmin();
             $modelo=new Productos();
+
+            $talla=$modelo->MostrarTalla($_GET['id']);//Metodo para mostrar datos de la talla mediante ID
             if(isset($_GET['id'])&&$_SERVER['REQUEST_METHOD']=='POST'){//Sacamos los datos del id de la categoria a actualizar y los datos del form
                 $id_talla=$_GET['id'];
                 $talla=$_POST['talla'];
@@ -726,7 +813,7 @@
             require_once "vista/productos/EditarTallas.php";
         }
 
-        public function GestionPedidos(){
+        public function GestionPedidos(){//Metodo para Gestionar Pedidos
             $this->checkAdmin();
             $modelo=new Productos();
 
@@ -747,5 +834,37 @@
             //Cargar la vista con las Categorias
             require_once "vista/productos/GestionPedidos.php";
         }
+
+        public function EditarPedidos(){//Metodo para editar Pedidos
+            $this->checkAdmin();
+            $modelo=new Productos();
+            $pedido=$modelo->MostrarPedido($_GET['id']);//Metodo para mostrar datos del pedido mediante ID
+
+            if($_SERVER['REQUEST_METHOD']=="POST"){
+                $id=$_GET['id'];
+                $estado=$_POST['estado'];
+
+                $modelo->editarPedidos($id,$estado);
+                header("Location: index.php?action=GestionPedidos");
+                exit();
+            }
+            require_once "vista/productos/EditarPedido.php";
+        }
+
+        public function EliminarPedidos(){//Metodo para eliminar Pedidos
+            $this->checkAdmin();
+
+            if (isset($_GET['id'])) {//Comprobamos que existe el id de la talla que vamos a eliminar
+                $id = (int)$_GET['id'];
+                
+                $modelo = new Productos();//Llamamos al modelo y al metodo para eliminar
+                $modelo->eliminarPedidos($id);
+
+                // Redirigir para limpiar la URL y actualizar la lista
+                header("Location: index.php?action=GestionPedidos");
+                exit();
+            }
+        }
+
     }
 ?>

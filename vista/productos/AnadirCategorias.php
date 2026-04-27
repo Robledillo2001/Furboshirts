@@ -32,7 +32,7 @@ include __DIR__ . '/../header.php';
 
             <div class="acciones-form">
                 <button type="submit">Guardar</button>
-                <a href="index.php?action=GestionCategorias"><button class="btn-login">Cancelar</button></a>
+                <a href="index.php?action=GestionCategorias">Cancelar</a>
             </div>
         </form>
     </div>

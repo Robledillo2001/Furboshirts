@@ -13,12 +13,12 @@ include __DIR__ . '/../header.php';
         <form action="index.php?action=EditarCategoria&id=<?= $_GET['id']; ?>" method="POST">
             <div class="input-group">
                 <label for="prenda">Prenda</label>
-                <input type="text" name="prenda" id="prenda">
+                <input type="text" name="prenda" id="prenda" value="<?= $categoria['PRENDA'] ?>">
             </div>
 
             <div class="input-group">
                 <label for="desc">Descripcion</label>
-                <textarea name="desc" id="desc"></textarea>
+                <textarea name="desc" id="desc" ><?= $categoria['DESCRIPCION'] ?></textarea>
             </div>
 
             <div class="input-group">

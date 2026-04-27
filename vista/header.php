@@ -81,10 +81,12 @@
                         <img src="<?=$foto_perfil ?>" alt="Perfil" class="img-perfil">
                         <div class="dropdown-content">
                             <a href="index.php?action=configuracion"><i class="fas fa-user-edit"></i> Configuración</a>
-                            <a href="index.php?action=pedidos"><i class="fas fa-box-open"></i> Mis Pedidos</a>
-                            <a href="index.php?action=valoraciones"><i class="fas fa-star"></i> Valoraciones</a>
+                            <a href="index.php?action=VerPedidos"><i class="fas fa-box-open"></i> Mis Pedidos</a>
+                            <a href="index.php?action=Vervaloraciones"><i class="fas fa-star"></i> Valoraciones</a>
                         </div>
                     </div>
+                    <a href="?action=verCarrito"><i class="fas fa-shopping-cart"></i></a>
+                    <a href="?action=logout" title="Cerrar Sesión"><i class="fas fa-sign-out-alt"></i></a>
                 <?php else: ?>
                     <a href="?action=login" title="Iniciar Sesión"><i class="fas fa-user"></i></a>
                 <?php endif; ?>

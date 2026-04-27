@@ -87,7 +87,7 @@
         <span class="promo-badge"><i class="fas fa-bolt"></i> Temporada 2025/26</span>
         <h2>Colecciones Oficiales</h2>
         <p>Descubre las últimas incorporaciones: camisetas de La Liga, Champions League, Premier League y mucho más. Envío gratis en todos los pedidos.</p>
-        <a href="index.php?action=mostrarCatalogo" class="btn-promo">
+        <a href="index.php?action=mostrarCatalogo&ano_edicion=2026" class="btn-promo">
             <i class="fas fa-arrow-right"></i> Ver catálogo completo
         </a>
     </div>

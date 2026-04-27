@@ -13,18 +13,21 @@ include __DIR__ . '/../header.php';
         <form action="index.php?action=EditarED&id=<?= $_GET['id'] ?? '' ?>&from=<?= $_GET['from'] ?? 'GestionEquipos' ?>" method="POST" enctype="multipart/form-data">
             <div class="input-group">
                 <label for="nombre_equipo">NOMBRE</label>
-                <input type="text" name="nombre_equipo" id="nombre_equipo">
+                <input type="text" name="nombre_equipo" id="nombre_equipo" value="<?=$ED['NOMBRE_EQUIPO']  ?>">
             </div>
 
             <div class="input-group">
                 <label for="tipo">TIPO</label> <select name="tipo" id="tipo">
-                    <option value="Equipo">Equipo</option>
-                    <option value="Seleccion">Selección</option>
+                    <option value="Equipo" <?= $ED['TIPO'] == 'Equipo' ? 'selected' : '' ?>>Equipo</option>
+                    <option value="Seleccion" <?= $ED['TIPO'] == 'Seleccion' ? 'selected' : '' ?>>Selección</option>
                 </select>
             </div>  
 
             <div class="input-group">
                 <label for="imagen">Escudo / Logo de la ED:</label>
+                <?php if (isset($ED['ESCUDO'])): ?>
+                    <img src="<?= $ED['ESCUDO'] ?>" alt="Logo actual" style="width: 50px; display: block; margin-bottom: 10px;">
+                <?php endif; ?>
                 <input type="file" id="imagen" name="imagen" accept="image/*">
                 <small style="color:#f4f4f4;">(Opcional) Formatos: JPG, PNG, WEBP.</small>
             </div>

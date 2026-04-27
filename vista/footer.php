@@ -9,9 +9,9 @@
                         </div>
                         <div class="social-links">
                             <p>Redes Sociales</p>
-                            <a href="#"><i class="fab fa-facebook"></i></a>
-                            <a href="#"><i class="fab fa-instagram"></i></a>
-                            <a href="#"><i class="fab fa-twitter"></i></a>
+                            <a href="https://www.facebook.com/?locale=es_ES"><i class="fab fa-facebook"></i></a>
+                            <a href="https://www.instagram.com/"><i class="fab fa-instagram"></i></a>
+                            <a href="https://x.com/?lang=es"><i class="fab fa-twitter"></i></a>
                         </div>
                     </div>
 

@@ -4,30 +4,14 @@
     <aside class="sidebar-gestion">
         <h3>Administración</h3>
         <nav>
-            <a href="index.php?action=GestionProductos" class="<?= ($_GET['action'] == 'GestionProductos') ? 'active' : '' ?>">
-                <i class="fas fa-tshirt"></i> Productos
+            <a href="index.php?action=inicio" class="<?= ($_GET['action'] == 'GestionProductos') ? 'active' : '' ?>">
+                <i class="fas fa-home"></i> Volver a Inicio
             </a>
-            <a href="index.php?action=GestionCategorias" class="<?= ($_GET['action'] == 'GestionCategorias') ? 'active' : '' ?>">
-                <i class="fas fa-tags"></i> Categorias
+            <a href="index.php?action=VerPedidos" class="<?= ($_GET['action'] == 'GestionCategorias') ? 'active' : '' ?>">
+                <i class="fas fa-box-open"></i> Mis Pedidos
             </a>
-            <a href="index.php?action=GestionTallas" class="<?= ($_GET['action'] == 'GestionTallas') ? 'active' : '' ?>">
-                <i class="fas fa-ruler"></i> Tallas
-            </a>
-            <a href="index.php?action=GestionEquipos" class="<?= ($_GET['action'] == 'GestionEquipos') ? 'active' : '' ?>">
-                <i class="fas fa-shield-alt"></i> Equipos
-            </a>
-            <a href="index.php?action=GestionSelecciones" class="<?= ($_GET['action'] == 'GestionSelecciones') ? 'active' : '' ?>">
-                <i class="fas fa-globe"></i> Selecciones
-            </a>
-            <a href="index.php?action=GestionTemporadas" class="<?= ($_GET['action'] == 'GestionTemporadas') ? 'active' : '' ?>">
-                <i class="fas fa-calendar-alt"></i> Años/Temporadas
-            </a>
-            <a href="index.php?action=GestionPedidos" class="<?= ($_GET['action'] == 'GestionPedidos') ? 'active' : '' ?>">
-                <i class="fas fa-history"></i> Historial de Pedidos
-            </a>
-            <hr>
-            <a href="index.php?action=MenuAdmin">
-                <i class="fas fa-arrow-left"></i> Volver al Panel
+            <a href="index.php?action=Vervaloraciones" class="<?= ($_GET['action'] == 'GestionTallas') ? 'active' : '' ?>">
+                <i class="fas fa-star"></i> Mis valoraciones
             </a>
         </nav>
     </aside>
@@ -43,7 +27,6 @@
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Usuario</th>
                         <th>Fecha</th>
                         <th>Total</th>
                         <th>Estado</th>
@@ -57,17 +40,13 @@
                         <?php foreach ($pedidosPag as $p): ?>
                             <tr>
                                 <td><?= $p['ID_PEDIDO'] ?></td>
-                                <td><?= htmlspecialchars($p['NOMBRE_USUARIO']) ?></td>
                                 <td><?= htmlspecialchars($p['FECHA']) ?></td>
                                 <td><?= number_format($p['TOTAL'], 2) ?> €</td>
                                 <td><?= htmlspecialchars($p['ESTADO']) ?></td>
                                 <td><?= htmlspecialchars($p['DIRECCION_ENVIO']) ?></td>
                                 <td><?= htmlspecialchars($p['METODO_PAGO']) ?></td>
                                 <td>
-                                    <?php if($p['ESTADO']!=="Entregado"&&$p['ESTADO']!=="Cancelado"):?>
-                                        <a href="index.php?action=EditarPedidos&id=<?= $p['ID_PEDIDO'] ?>" class="btn-icon edit"><i class="fas fa-edit"></i></a>
-                                    <?php endif;?>
-                                    <a href="index.php?action=EliminarPedidos&id=<?= $p['ID_PEDIDO'] ?>" class="btn-icon delete" onclick="return confirm('¿Eliminar este Pedido?')"><i class="fas fa-trash"></i></a>
+                                    <a href="index.php?action=EliminarPedido&id=<?= $p['ID_PEDIDO'] ?>&from=VerPedidos" class="btn-icon delete" onclick="return confirm('¿Eliminar este Pedido?')"><i class="fas fa-trash"></i></a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

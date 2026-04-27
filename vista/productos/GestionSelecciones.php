@@ -26,7 +26,7 @@
                 <i class="fas fa-history"></i> Historial de Pedidos
             </a>
             <hr>
-            <a href="index.php?action=GestionTienda">
+            <a href="index.php?action=MenuAdmin">
                 <i class="fas fa-arrow-left"></i> Volver al Panel
             </a>
         </nav>

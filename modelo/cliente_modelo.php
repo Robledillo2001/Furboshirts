@@ -249,27 +249,6 @@
             }
         }
 
-        public function insertarValoracion($id_prod,$id_user,$puntos,$comentario){//Metodo para añadir valoracion de un producto
-            try{
-                $this->db->beginTransaction();
-                $sql="INSERT INTO valoracion (ID_PRODCUTO, ID_USUARIO, PUNTUACION, COMENTARIOS)
-                        VALUES(:id_p,:id_u,:puntos,:comen)";
-                $stmt = $this->db->prepare($sql);
-                $stmt->bindValue(':id_p', $id_prod, PDO::PARAM_INT);
-                $stmt->bindValue(':id_u', $id_user, PDO::PARAM_INT);
-                $stmt->bindValue(':puntos', $puntos, PDO::PARAM_INT);
-                $stmt->bindValue(':comen', $comentario, PDO::PARAM_STR);
-                return $stmt->execute();
-
-                $this->db->commit();
-            }catch(PDOException $e){
-                if($this->db->inTransaction()){
-                    $this->db->rollBack();
-                }
-                die("Error al guardar valoracion: ".$e->getMessage());
-            }
-        }
-
         public function registrarCompra($id_user,$fecha,$total,$estado,$direccion,$pago,$carrito){
             try{
                 $this->db->beginTransaction();
@@ -312,6 +291,116 @@
                     $this->db->rollBack();
                 }
                 die("Error al Guardar el pedido : ".$e->getMessage());
+            }
+        }
+
+        public function insertarValoracion($id_prod,$id_user,$puntos,$comentario){//Metodo para añadir valoracion de un producto
+            try{
+                $this->db->beginTransaction();
+                $sql="INSERT INTO valoracion (ID_USER,ID_PRODUCTO, PUNTUACION, COMENTARIOS)
+                        VALUES(:id_u,:id_p,:puntos,:comen)";
+                $stmt = $this->db->prepare($sql);
+                $stmt->bindValue(':id_u', $id_user, PDO::PARAM_INT);
+                $stmt->bindValue(':id_p', $id_prod, PDO::PARAM_INT);
+                $stmt->bindValue(':puntos', $puntos, PDO::PARAM_INT);
+                $stmt->bindValue(':comen', $comentario, PDO::PARAM_STR);
+                $stmt->execute();
+
+                $this->db->commit();
+
+                return "¡Valoración guardada con éxito!";
+            }catch(PDOException $e){
+                if($this->db->inTransaction()){
+                    $this->db->rollBack();
+                }
+                die("Error al guardar valoracion: ".$e->getMessage());
+            }
+        }
+
+        public function yaHaValorado($id_user, $id_prod) {//Metodo para comprobar que el usuario ya ha valorado
+            $sql = "SELECT COUNT(*) FROM valoracion WHERE ID_USER = :id_u AND ID_PRODUCTO = :id_p";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([':id_u' => $id_user, ':id_p' => $id_prod]);
+            return $stmt->fetchColumn() > 0; // Devuelve true si ya existe
+        }
+
+        public function obtenerValoracionesPorProductos($id_prod){//Metodo para ver las valoraciones de los clientes
+            try{
+                $sql="SELECT v.*, u.NOMBRE_USUARIO, u.IMAGEN_USER
+                    FROM valoracion v
+                    JOIN usuarios u ON v.ID_USER=u.ID_USUARIO
+                    WHERE v.ID_PRODUCTO=:id_p
+                    ORDER BY v.ID_VALORACION DESC";
+                $stmt=$this->db->prepare($sql);
+                $stmt->execute([':id_p' => $id_prod]);
+                return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            }catch(PDOException $e){
+                die("Error al mostrar las valoraciones: ".$e->getMessage());
+            }
+        }
+
+        public function mostrarPedidos($inicio,$cantidad,$id_user){//Metodo para mostrar todos los pedidos del usuario
+            try{
+                $sql="SELECT * FROM pedidos p
+                    WHERE ID_USUARIO=:id_u
+                    LIMIT :inicio, :cantidad";
+                $stmt=$this->db->prepare($sql);
+
+                $stmt->bindParam(":id_u",$id_user,PDO::PARAM_INT);
+                $stmt->bindParam(":inicio",$inicio,PDO::PARAM_INT);
+                $stmt->bindParam(":cantidad",$cantidad,PDO::PARAM_INT);
+
+                $stmt->execute();
+                return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            }catch(PDOException $e){
+                die("Error al mostrar los Pedidos: ".$e->getMessage());
+            }
+        }
+
+        public function ContarPedidos($id_user){//Cuenta el total de los pedidos
+            try{
+                $sql = "SELECT COUNT(*) as total FROM pedidos WHERE ID_USUARIO=:id_u";
+                $stmt = $this->db->prepare($sql);
+                $stmt->execute(["id_u"=>$id_user]);
+
+                $res=$stmt->fetch(PDO::FETCH_ASSOC);
+                return $res['total'];
+            }catch(PDOException $e){
+                die("Error al Contar Pedidos".$e->getMessage());
+            }
+        }
+
+        public function mostrarValoraciones($inicio,$cantidad,$id_user){//Metodo para mostrar todas las valoraciones del usuario
+            try{
+                $sql="SELECT v.*, p.NOMBRE
+                    FROM valoracion v 
+                    JOIN productos p
+                    ON v.ID_PRODUCTO=p.ID_PRODUCTO
+                    WHERE v.ID_USER=:id_u
+                    LIMIT :inicio, :cantidad";
+                $stmt=$this->db->prepare($sql);
+
+                $stmt->bindParam(":id_u",$id_user,PDO::PARAM_INT);
+                $stmt->bindParam(":inicio",$inicio,PDO::PARAM_INT);
+                $stmt->bindParam(":cantidad",$cantidad,PDO::PARAM_INT);
+
+                $stmt->execute();
+                return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            }catch(PDOException $e){
+                die("Error al mostrar las valoraciones: ".$e->getMessage());
+            }
+        }
+
+        public function ContarValoraciones($id_user){//Cuenta el total de los pedidos
+            try{
+                $sql = "SELECT COUNT(*) as total FROM valoracion WHERE ID_USER=:id_u";
+                $stmt = $this->db->prepare($sql);
+                $stmt->execute(["id_u"=>$id_user]);
+
+                $res=$stmt->fetch(PDO::FETCH_ASSOC);
+                return $res['total'];
+            }catch(PDOException $e){
+                die("Error al Contar Pedidos".$e->getMessage());
             }
         }
         

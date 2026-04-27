@@ -351,7 +351,36 @@
             }
         }
 
-        public function obtenerProductoPorId($id_producto) {
+        public function MostrarProducto($id_producto) {//Metodo para mostrar los datos de un producto al editarlo
+            $sql = "SELECT * FROM productos WHERE ID_PRODUCTO = :id_producto";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([':id_producto' => $id_producto]);
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        }
+
+        public function ObtenerStockTallas($id_producto) {//Metodo para obtener el Stock de las tallas al editar el producto
+            try {
+                // Seleccionamos exactamente dos columnas para usar FETCH_KEY_PAIR
+                $sql = "SELECT ID_TALLA, STOCK_ESPECIFICO FROM productos_tallas WHERE ID_PRODUCTO = :id";
+                $stmt = $this->db->prepare($sql);
+                $stmt->execute([':id' => $id_producto]);
+                
+                // Esto devolverá algo como: [ 1 => 15, 2 => 0, 5 => 20 ]
+                return $stmt->fetchAll(PDO::FETCH_KEY_PAIR); 
+            } catch (PDOException $e) {
+                die("Error al mostrar el stock"); // Devolvemos array vacío si falla
+            }
+        }
+
+        public function ObtenerImagenesProducto($id_producto) {// Obtener las imágenes del producto
+            // Ajusta el nombre de la tabla/columna según tu BD (ej: productos_imagenes)
+            $sql = "SELECT * FROM imagenes WHERE ID_PRODUCTO = :id_producto";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([':id_producto' => $id_producto]);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        }
+
+        public function obtenerProductoPorId($id_producto) {//Metodo para que seleccione los deportes asociados a una categoria al Añadir/Editar un Producto
             try {
                 // Seleccionamos los datos del producto
                 // Incluimos ID_DEPORTE para que el select de la vista sepa qué opción marcar
@@ -524,6 +553,13 @@
                 }
                 die("Error al editar categoria: ".$e->getMessage());
             }
+        }
+
+        public function MostrarCategoria($id_cat) {//Metodo para mostrar una categoria por ID la editarla
+            $sql = "SELECT * FROM categorias WHERE ID_CAT = :id_cat";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([':id_cat' => $id_cat]);
+            return $stmt->fetch(PDO::FETCH_ASSOC);
         }
 
         public function categorias_deportes($id_cat){//Metodo para comprobar que una categoria esta asignada a un deporte
@@ -717,6 +753,13 @@
                 }
                 die("Error al eliminar entidad deportiva".$e->getMessage());
             }
+        }
+
+        public function MostrarED($id_ED) {//Metodo para mostrar una ENTIDAD DEPORTIVA al editarlo segun su ID
+            $sql = "SELECT * FROM entidad_deportiva WHERE ID_EQUIPO = :id_ED";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([':id_ED' => $id_ED]);
+            return $stmt->fetch(PDO::FETCH_ASSOC);
         }
 
         //Administracion de los Logos y Competiciones
@@ -927,6 +970,74 @@
                 die("Error al eliminar temporada: ".$e->getMessage());
             }
         }
+        //Administracion de logos y competiciones
+        public function mostrarCompeticiones($inicio,$cantidad){//Metodo para mostrar las competiciones mediante paginacion
+            try {
+                $sql = "SELECT * 
+                    FROM competiciones 
+                    LIMIT :inicio, :cantidad";
+                $stmt = $this->db->prepare($sql);
+                $stmt->bindParam(":inicio",$inicio,PDO::PARAM_INT);
+                $stmt->bindParam(":cantidad",$cantidad,PDO::PARAM_INT);
+
+                $stmt->execute();
+                return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            } catch(PDOException $e) {
+                die("Error al listar competiciones: " . $e->getMessage());
+            }
+        }
+
+        public function contarCompeticiones(){//Metodo para contar las competiciones
+            try{
+                $sql = "SELECT COUNT(*) as total 
+                        FROM competiciones ";
+                $stmt = $this->db->prepare($sql);
+                $stmt->execute();
+
+                $res = $stmt->fetch(PDO::FETCH_ASSOC);
+                return $res['total'];
+            }catch(PDOException $e){
+                die("Error al Contar Competiciones".$e->getMessage());
+            }
+        }
+
+        public function editarCompeticion($id_comp,$nombre,$tipo){//Metodo para editar una competicion
+            try{
+                $this->db->beginTransaction();
+                
+                if(!empty($nombre) && !empty($tipo)){
+                    $sql="UPDATE competiciones 
+                        SET NOMBRE_COMP=:nombre, TIPO_COMP=:tipo
+                        WHERE ID_COMP=:id_comp";
+                    $stmt=$this->db->prepare($sql);
+                    $stmt->execute([
+                        ":id_comp"=>$id_comp,
+                        ":nombre"=>$nombre,
+                        "tipo"=>$tipo
+                    ]);
+                }
+                
+                $this->db->commit();
+                return "Talla Actualizada";
+            }catch(PDOException $e){
+                if($this->db->inTransaction()){
+                    $this->db->rollBack();
+                }
+                die("Error al actualizar la Competicion: ".$e->getMessage());
+            }
+        }
+
+        public function MostrarComp($id_comp){//Metodo para mostrar los datos de la competicion al Editar
+            try{
+                $sql="SELECT * FROM competiciones WHERE ID_COMP=:id_comp";
+                $stmt=$this->db->prepare($sql);
+                $stmt->execute([':id_comp'=>$id_comp]);
+
+                return $stmt->fetch(PDO::FETCH_ASSOC);
+            }catch(PDOException $e){
+                die("Error al mostrar la competicion");
+            }
+        }
 
         public function eliminarCompeticiones($id_comp){//Metodo para eliminar competiciones
             try{
@@ -943,6 +1054,70 @@
                     $this->db->rollBack();
                 }
                 die("Error al eliminar competicion: ".$e->getMessage());
+            }
+        }
+
+        public function mostrarLogos($inicio,$cantidad){//Metodo para mostrar los parches medianet paginacion
+            try {
+                $sql = "SELECT * 
+                    FROM parches
+                    LIMIT :inicio, :cantidad";
+                $stmt = $this->db->prepare($sql);
+                $stmt->bindParam(":inicio",$inicio,PDO::PARAM_INT);
+                $stmt->bindParam(":cantidad",$cantidad,PDO::PARAM_INT);
+
+                $stmt->execute();
+                return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            } catch(PDOException $e) {
+                die("Error al listar parches: " . $e->getMessage());
+            }
+        }
+
+        public function contarLogos(){//Metodo para contar los logos
+            try{
+                $sql = "SELECT COUNT(*) as total 
+                        FROM parches ";
+                $stmt = $this->db->prepare($sql);
+                $stmt->execute();
+
+                $res = $stmt->fetch(PDO::FETCH_ASSOC);
+                return $res['total'];
+            }catch(PDOException $e){
+                die("Error al Contar Parches".$e->getMessage());
+            }
+        }
+
+        public function editarLogo($id_logo,$ruta){//Metodo para editar un Parche
+            try{
+                $this->db->beginTransaction();
+                $sql="UPDATE parches 
+                    SET PARCHE=:parche
+                    WHERE ID_LOGO=:id_logo";
+                $stmt=$this->db->prepare($sql);
+                $stmt->execute([
+                     ":id_logo"=>$id_logo,
+                    ":parche"=>$ruta
+                ]);
+                
+                $this->db->commit();
+                return "Logo Actualizada";
+            }catch(PDOException $e){
+                if($this->db->inTransaction()){
+                    $this->db->rollBack();
+                }
+                die("Error al actualizar el Logo: ".$e->getMessage());
+            }
+        }
+
+        public function MostrarLogo($id_logo){//Metodo para mostrar los datos de un logo al Editar
+            try{
+                $sql="SELECT * FROM parches WHERE ID_LOGO=:id_logo";
+                $stmt=$this->db->prepare($sql);
+                $stmt->execute([':id_logo'=>$id_logo]);
+
+                return $stmt->fetch(PDO::FETCH_ASSOC);
+            }catch(PDOException $e){
+                die("Error al mostrar la competicion");
             }
         }
 
@@ -1046,6 +1221,14 @@
             }
         }
 
+        public function MostrarTalla($id_talla) {//Metodo para mostrar las tallas segun ID al editarla
+            $sql = "SELECT * FROM tallas WHERE ID_TALLA = :id_talla";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([':id_talla' => $id_talla]);
+
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        }
+
         //Administracion de los Pedidos
         public function ListarPedidos($inicio, $cantidad){//Muestra todos los pedidos de los usuarios
             try{
@@ -1072,6 +1255,46 @@
                 return $res['total'];
             }catch(PDOException $e){
                 die("Error al Contar Pedidos".$e->getMessage());
+            }
+        }
+
+        public function editarPedidos($id_pedido,$estado){//Metodo para editar pedidos
+            try{
+                $this->db->beginTransaction();
+                if(!empty($estado)){
+                    $sql="UPDATE pedidos SET ESTADO=:estado WHERE ID_PEDIDO=:id_pedido";
+                    $stmt=$this->db->prepare($sql);
+                    $stmt->execute([":id_pedido"=>$id_pedido,":estado"=>$estado]);
+                }
+                $this->db->commit();
+                return "Pedido Actualizado Actualizado";
+            }catch(PDOException $e){
+                if($this->db->inTransaction()){
+                    $this->db->rollBack();
+                }
+                die("Error al actualizar el Pedido: ".$e->getMessage());
+            }
+        }
+
+        public function MostrarPedido($id_pedido) {//Metodo para mostrar los pedidos segun ID para editarlo
+            $sql = "SELECT * FROM pedidos WHERE ID_PEDIDO = :id_pedido";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([':id_pedido' => $id_pedido]);
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        }
+
+        public function eliminarPedidos($id){//Metodo para eliminar pedidos
+            try {
+                $this->db->beginTransaction();//Empezamos una transaccion para asegurar que todo se guarde
+                $sql = "DELETE FROM pedidos WHERE ID_PEDIDO = :id";
+                $stmt = $this->db->prepare($sql);
+                $stmt->bindParam(":id", $id, PDO::PARAM_INT);
+                $stmt->execute();
+
+                $this->db->commit();
+                return "Pedido eliminado";
+            } catch (PDOException $e) {
+                die("Error al eliminar Pedido: " . $e->getMessage());
             }
         }
     }
