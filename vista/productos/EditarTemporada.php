@@ -20,7 +20,8 @@ include __DIR__ . '/../header.php';
                 <select id="id_logo" name="id_logo" onchange="actualizarVistaPrevia(this)">
                     <option value="todos">-- Selecciona Logo</option>
                     <?php foreach ($logos as $logo): ?>
-                        <option value="<?= $logo['ID_LOGO']; ?>" data-img="<?= $logo['PARCHE']; ?>">
+                        <option value="<?= $logo['ID_LOGO']; ?>" data-img="<?= $logo['PARCHE']; ?>"
+                            <?= $logo['ID_LOGO'] == $temporada['ID_LOGO'] ? 'selected' : '' ?>>
                             Parche #<?= $logo['ID_LOGO']; ?>
                         </option>
                     <?php endforeach; ?>
@@ -33,7 +34,7 @@ include __DIR__ . '/../header.php';
             
             <div class="input-group">
                 <label for="anio_edicion">Temporada / Año:</label>
-                <input type="number" id="anio_edicion" name="anio_edicion" placeholder="Ej: 2025" required>
+                <input type="number" id="anio_edicion" name="anio_edicion" placeholder="Ej: 2025" value="<?= $temporada['ANO_EDICION'] ?>" required>
             </div>
 
              <div class="checkbox-group">
@@ -53,7 +54,7 @@ include __DIR__ . '/../header.php';
             <div class="btn">
                 <div class="acciones-form">
                     <button type="submit" class="btn-login">Guardar</button>
-                    <a href="index.php?action=GestionTemporadas"><button class="btn-login">Cancelar</button></a>
+                    <a href="index.php?action=GestionTemporadas">Cancelar</a>
                 </div>
             </div>
         </form>

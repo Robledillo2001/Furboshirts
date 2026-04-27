@@ -737,6 +737,7 @@
                     die("Error al realizar la asignación en la tabla temporadas.");
                 }
             }
+            $temporada=$modelo->mostrarTemporadas($_GET['id_comp'],$_GET['id_logo'],$_GET['id_equipo']);
             $logos = $modelo->listarParches();//Se listaran los parches disponibles si se necesita modificarlos
 
             require_once "vista/productos/EditarTemporada.php";

@@ -949,6 +949,27 @@
             }
         }
 
+        public function mostrarTemporadas($id_comp,$id_logo,$id_equipo){//Metodo para mostrar temporadas al editarla 
+            try {
+                // Ajusta el nombre de la tabla si es diferente en tu base de datos
+                $sql = "SELECT * FROM temporadas 
+                        WHERE ID_COMP = :id_comp 
+                        AND ID_LOGO = :id_logo 
+                        AND ID_EQUIPO = :id_equipo";
+                
+                $stmt = $this->db->prepare($sql);
+                $stmt->execute([
+                    ':id_comp'   => $id_comp,
+                    ':id_logo'   => $id_logo,
+                    ':id_equipo' => $id_equipo
+                ]);
+
+                return $stmt->fetch(PDO::FETCH_ASSOC);
+            } catch (PDOException $e) {
+                die("Error al obtener los datos de la temporada: " . $e->getMessage());
+            }
+        }
+
         public function eliminarTemporada($id_comp,$id_logo,$id_equipo){//Metodo para eliminar una temporada
             try{
                 $this->db->beginTransaction();

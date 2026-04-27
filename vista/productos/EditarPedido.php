@@ -14,15 +14,15 @@ include __DIR__ . '/../header.php';
             <div class="input-group">
                 <label for="estado">Estado</label>
                 <select name="estado" id="estado">
-                    <option value="Entregado">Entregado</option>
-                    <option value="Pendiente">Pendiente</option>
-                    <option value="Cancelado">Cancelado</option>
+                    <option value="Entregado" <?= $pedido['ESTADO'] == 'Entregado' ? 'selected' : ''?>>Entregado</option>
+                    <option value="Pendiente" <?= $pedido['ESTADO'] == 'Pendiente' ? 'selected' : ''?>>Pendiente</option>
+                    <option value="Cancelado" <?= $pedido['ESTADO'] == 'Cancelado' ? 'selected' : ''?>>Cancelado</option>
                 </select>
             </div>
 
             <div class="acciones-form">
                 <button type="submit">Guardar</button>
-                <a href="index.php?action=GestionTallas">Cancelar</a>
+                <a href="index.php?action=GestionPedidos">Cancelar</a>
             </div>
         </form>
     </div>
