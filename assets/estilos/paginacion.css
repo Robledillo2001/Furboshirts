@@ -6,6 +6,7 @@
     display: flex;
     justify-content: center;
     gap: 6px;
+    flex-wrap: wrap;
 }
 
 .btn-pag {
@@ -85,13 +86,14 @@
 
 .tabla-gestion {
     width: 100%;
+    min-width: 600px;
     border-collapse: collapse;
     font-family: 'Open Sans', system-ui, sans-serif;
 }
 
 .tabla-gestion img {
-    width: 80px;
-    height: 85px;
+    width: 65px;
+    height: 65px;
     object-fit: cover;
     border-radius: var(--radio-sm);
 }
@@ -297,4 +299,83 @@
     color: var(--texto-oscuro);
     font-size: 1.7rem;
     font-weight: 800;
+}
+
+@media (max-width: 992px) {
+    .layout-gestion {
+        flex-direction: column; /* Sidebar arriba, contenido abajo */
+    }
+
+    .sidebar-gestion {
+        width: 100%;
+        padding: 15px 0;
+    }
+
+    .sidebar-gestion h3 {
+        margin-bottom: 10px;
+        padding-bottom: 10px;
+    }
+
+    .sidebar-gestion nav {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .sidebar-gestion nav a {
+        padding: 10px 15px;
+        border-left: none;
+        border-bottom: 3px solid transparent;
+    }
+
+    .sidebar-gestion nav a:hover,
+    .sidebar-gestion nav a.active {
+        border-left-color: transparent;
+        border-bottom-color: var(--verde-claro);
+        padding-left: 15px;
+    }
+}
+
+.container-tabla {
+    width: 100%; /* Cambia de 95% a 100% en móviles */
+    overflow-x: auto; /* Permite scroll lateral */
+    -webkit-overflow-scrolling: touch;
+    border: 1px solid var(--gris-borde);
+}
+
+@media (max-width: 768px) {
+    .header-seccion {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .botones-header {
+        width: 100%;
+    }
+
+    .btn-anadir {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .contenido-gestion {
+        padding: 15px; /* Reducir padding lateral */
+    }
+    
+    .titulo-seccion {
+        font-size: 1.4rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .tabla-gestion img {
+        width: 50px;
+        height: 55px;
+    }
+
+    .btn-pag {
+        padding: 7px 10px; /* Reducimos un poco el tamaño en móviles */
+        font-size: 0.8rem;
+    }
 }

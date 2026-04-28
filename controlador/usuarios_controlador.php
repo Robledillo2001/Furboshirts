@@ -222,8 +222,16 @@
                     }
 
                     if($datosUsuario['ROL']!=='admin'){//Si no es un admin se redirigira al inicio de la pagina
-                        header("Location: index.php?action=inicio");
-                        exit();  
+                        if(isset($_SESSION['url'])){//Si encuentra una sesion con una url al agregar productos al carrito o hacer una valoracion
+                            $destino=$_SESSION['url'];
+                            unset($_SESSION['URL_PENDIENTE']); // Limpiamos para que no se repita
+                            header("Location: " . $destino);
+                            exit(); 
+                        }else{
+                            header("Location: index.php?action=inicio");
+                            exit(); 
+                        }
+                         
                     }else{//Si es admin se redirigira a su propio menu
                         header("Location: index.php?action=MenuAdmin");
                         exit(); //Finaliza la ejecucion del script para que ocurra la redireccion

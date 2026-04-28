@@ -1,5 +1,18 @@
 <?php
     require_once "modelo/cliente_modelo.php";
+
+    //Acceso a los archivos de FPDF
+    require_once "fpdf/fpdf.php";
+    
+    //Excepciones del PHPMAILER
+    use PHPMailer\PHPMailer\PHPMailer;
+    use PHPMailer\PHPMailer\Exception;
+
+    // Incluir las clases de PHPMailer
+    require 'PHPMailer/PHPMailer/Exception.php';
+    require 'PHPMailer/PHPMailer/PHPMailer.php';
+    require 'PHPMailer/PHPMailer/SMTP.php';
+
     class cliente_controlador{
         public function inicio(){
             $this->comprobarRol();//Metodo para comprobar si el rol del user es un cliente
@@ -7,18 +20,39 @@
         }
 
         private function comprobarCliente(){//Metodo privado que comprueba si el usuario esta regisrado y es un cliente
-            if(!isset($_SESSION['id'])){
+            if(!isset($_SESSION['id'])){//Comprobamos que las sesiones funcionan
+                //Buscamos con el id de producto y el año de edicion
+                if(isset($_SESSION['id_producto'],$_SESSION['anio_edi'])){
+                    $id = $_SESSION['id_producto'];
+                    $anio = $_SESSION['anio_edi']; 
+
+                    if($id){
+                        //Reconstruimos la URL de la VISTA (VerDetalle) y no la del PROCESO (agregarCarrito)
+                        $urlRetorno = "index.php?action=VerDetalle&id=" . $id;
+                        
+                        if($anio){
+                            $urlRetorno .= "&anio=" . $anio;
+                        }
+                        $_SESSION['url']=$urlRetorno;//Capturamos la url actual
+                        unset($_SESSION['id_producto']);
+                        unset($_SESSION['anio_edi']);
+                    }else{
+                        //Fallback: Si no hay ID de producto o año de edicion, guardamos la URL tal cual
+                        $_SESSION['url'] = "index.php?" . $_SERVER['QUERY_STRING'];
+                    }
+                }
+                
                 $_SESSION['error_val']="¡Debes iniciar sesion antes de dejar tu valoracion o agregar productos al carrito!";
                 header("Location: index.php?action=login");
                 exit();
             }
             
-            $this->comprobarRol();
+            $this->comprobarRol();//Comprobamos que el rol es el de cliente o administrador
         }
 
-        private function comprobarRol(){
+        private function comprobarRol(){//Metodo que comprueba si el rol es de cliente 
             if(isset($_SESSION['ROL'])){
-                if($_SESSION['ROL']!=='cliente'){
+                if($_SESSION['ROL']!=='cliente'){//Si no es un cliente se redirige al menu de administrador
                     header("Location: index.php?action=MenuAdmin");
                     exit();
                 }
@@ -41,6 +75,7 @@
                 'id_cat'=>$_GET['id_cat']??null,
                 'id_deporte'=>$_GET['id_deporte']??null,
                 'ano_edicion'=>$_GET['ano_edicion']??null,
+                'nombre'=>$_GET['nombre'] ?? null,
             ];
             
             $paginaActual = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
@@ -76,6 +111,9 @@
             if (isset($_GET['id']) && isset($_GET['anio'])) {
                 $id = intval($_GET['id']);
                 $anio = $_GET['anio'];
+                //Prueba para guaradar el id de prodcuto y año de edicion en sesiones
+                $_SESSION['id_producto']=$id;
+                $_SESSION['anio_edi']=$anio;
 
                 // Llamada al modelo con la nueva consulta (incluye tallas y valoraciones)
                 $resultado = $modelo->verDetalle($id, $anio);
@@ -228,20 +266,149 @@
                 foreach ($_SESSION['carrito'] as $i) {
                     $subtotal += $i['precio'] * ($i['cantidad'] ?? 1);
                 }
-                $envio = 5.00;
+                $envio = 4.50;
                 $total = $subtotal + $envio;
                 $fecha = date('Y-m-d H:i:s');
                 $estado = 'Pendiente';
                 $id_user = $_SESSION['id'];
 
-                $modelo->registrarCompra($id_user, $fecha, $total, $estado, $direccion, $metodo_pago, $_SESSION['carrito']);
+                $id_pedido=$modelo->registrarCompra($id_user, $fecha, $total, $estado, $direccion, $metodo_pago, $_SESSION['carrito']);
 
+                if($id_pedido){//Si saca el id de pedido
+                    $this->enviarCorreoPDF($id_pedido,$fecha,$total,$direccion);//Enviamos los datos del pedido para generar un correo y un PDF
+                }
+                //Eliminamos los datos en sesion del carrito y redirigimos a la confirmacion del pedido
                 unset($_SESSION['carrito']);
                 header("Location: index.php?action=pedidoConfirmado");
                 exit();
             }
 
             require_once "vista/clientes/procesarCompra.php";
+        }
+
+        private function enviarCorreoPDF($id_pedido,$fecha,$total,$direccion,){//Funcion que enviará un correo y un PDF
+            $modelo = new Cliente();
+            $detalles = $modelo->obtenerDetallesPedido($id_pedido);
+
+            $pdf = new FPDF();
+            $pdf->AddPage();
+
+            //LOGO (Arriba a la izquierda)
+            if (file_exists("assets/img/FurboshirtsLogo.png")) {
+                $pdf->Image("assets/img/FurboshirtsLogo.png", 10, 10, 45);
+            }
+
+            //TÍTULO DE FACTURA (Alineado a la derecha del logo)
+            $pdf->SetY(15);
+            $pdf->SetFont('Arial', 'B', 20);
+            $pdf->SetTextColor(26, 82, 36); // Verde oscuro
+            $pdf->Cell(0, 10, utf8_decode("FACTURA OFICIAL"), 0, 1, 'R');
+            $pdf->Ln(15); // Espacio después del encabezado
+
+            //DATOS DEL PEDIDO (Cuadrados)
+            $pdf->SetTextColor(30, 35, 48);
+            $pdf->SetFont('Arial', 'B', 11);
+            $pdf->Cell(100, 7, utf8_decode("INFORMACIÓN DEL PEDIDO:"), 0, 0);
+            $pdf->SetFont('Arial', '', 11);
+            $pdf->Cell(0, 7, utf8_decode("Nº Pedido: #$id_pedido"), 0, 1, 'R');
+
+            $pdf->Cell(100, 6, "Fecha: $fecha", 0, 0);
+            $pdf->Cell(0, 6, "Estado: Pagado", 0, 1, 'R');
+
+            $pdf->Ln(5);
+            $pdf->SetFont('Arial', 'B', 10);
+            $pdf->Cell(0, 6, utf8_decode("Dirección de Envío:"), 0, 1);
+            $pdf->SetFont('Arial', '', 10);
+            $pdf->MultiCell(0, 5, utf8_decode($direccion), 0, 'L');
+            $pdf->Ln(10);
+
+            //CABECERA DE TABLA (Verde Oscuro corregido)
+            $pdf->SetFillColor(26, 82, 36); // Verde oscuro (#1a5224)
+            $pdf->SetTextColor(255, 255, 255); // Texto Blanco
+            $pdf->SetDrawColor(200, 200, 200); // Bordes gris suave
+            $pdf->SetFont('Arial', 'B', 10);
+
+            // Anchos ajustados para sumar 190mm (ancho total de página A4 menos márgenes)
+            $pdf->Cell(75, 8, 'Producto', 1, 0, 'C', true);
+            $pdf->Cell(20, 8, 'Talla', 1, 0, 'C', true);
+            $pdf->Cell(30, 8, 'Parche', 1, 0, 'C', true);
+            $pdf->Cell(15, 8, 'Cant.', 1, 0, 'C', true);
+            $pdf->Cell(25, 8, 'Precio Un.', 1, 0, 'C', true);
+            $pdf->Cell(25, 8, 'Subtotal', 1, 1, 'C', true);
+
+            //CUERPO DE LA TABLA
+            $pdf->SetTextColor(30, 35, 48);
+            $pdf->SetFont('Arial', '', 9);
+            $fill = false;
+
+            foreach($detalles as $det) {
+                $subtotal = $det['CANTIDAD'] * $det['PRECIO_UNITARIO'];
+                
+                // Color de fondo alterno para filas (opcional, muy profesional)
+                $pdf->SetFillColor(245, 245, 245); 
+                
+                $pdf->Cell(75, 7, utf8_decode($det['NOMBRE_PRODUCTO']), 1, 0, 'L', $fill);
+                $pdf->Cell(20, 7, $det['TALLA'], 1, 0, 'C', $fill);
+                $pdf->Cell(30, 7, utf8_decode($det['PARCHE']), 1, 0, 'C', $fill);
+                $pdf->Cell(15, 7, $det['CANTIDAD'], 1, 0, 'C', $fill);
+                $pdf->Cell(25, 7, number_format($det['PRECIO_UNITARIO'], 2) . " EUR", 1, 0, 'R', $fill);
+                $pdf->Cell(25, 7, number_format($subtotal, 2) . " EUR", 1, 1, 'R', $fill);
+                
+                $fill = !$fill; 
+            }
+
+            // TOTAL FINAL
+            $pdf->Ln(5);
+            $pdf->SetFont('Arial', 'B', 12);
+            $pdf->SetTextColor(26, 82, 36);
+            $pdf->Cell(165, 10, "TOTAL FINAL (IVA inc.): ", 0, 0, 'R');
+            
+            $pdf->SetFillColor(252, 246, 237); // Crema suave
+            $pdf->Cell(25, 10, number_format($total, 2) . " EUR", 0, 1, 'R', true);
+
+            // PIE DE PÁGINA
+            $pdf->SetY(-30);
+            $pdf->SetFont('Arial', 'I', 8);
+            $pdf->SetTextColor(128, 148, 166);
+            $pdf->Cell(0, 10, utf8_decode("Gracias por comprar en Furboshirts. Este documento sirve como comprobante de compra."), 0, 0, 'C');
+
+            // --- GUARDADO Y ENVÍO (Tu lógica actual) ---
+            $nombreArchivo = "factura_" . $id_pedido . ".pdf";
+            $carpetaDestino = "assets/facturas/";
+            if (!file_exists($carpetaDestino)) {
+                mkdir($carpetaDestino, 0777, true);
+            }
+            $rutaFisica = $carpetaDestino . $nombreArchivo;
+            $pdf->Output('F', $rutaFisica);
+
+            $modelo->registrarFacturas($id_pedido, $rutaFisica);
+
+            //Envio del correo con PHPMailer
+            $mail=new PHPMailer(true);
+
+            try{
+                $mail->isSMTP();
+                $mail->Host       = 'smtp.gmail.com'; 
+                $mail->SMTPAuth   = true;
+                $mail->Username   = 'lopezreinarobledilloruben@gmail.com'; 
+                $mail->Password   = 'qqwp zfzv agys nqfa'; 
+                $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+                $mail->Port       = 587;
+
+                $mail->setFrom('lopezreinarobledilloruben@gmail.com', 'Tienda Deportiva');
+                $mail->addAddress($_SESSION['correo']); 
+
+                // Adjuntar el archivo físico que guardamos en el paso 3
+                $mail->addAttachment($rutaFisica);
+
+                $mail->isHTML(true);
+                $mail->Subject = utf8_decode("Confirmación de Pedido #$id_pedido");
+                $mail->Body    = "<h1>¡Gracias por tu compra!</h1><p>Adjunto encontrarás la factura oficial de tu pedido.</p>";
+
+                $mail->send();
+            }catch(Exception $e){
+                die("Error al enviar el correo".$e->getMessage());
+            }
         }
 
         public function pedidoConfirmado(){

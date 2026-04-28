@@ -51,22 +51,40 @@
                 <?php endforeach; ?>
             </div>
 
+
+            <?php
+                $subtotal = 0;
+                foreach ($_SESSION['carrito'] as $item) {
+                    $subtotal += $item['precio'] * ($item['cantidad'] ?? 1);
+                }
+                $envio = 0.00;
+
+                if($subtotal<40){
+                    $envio = 4.50;
+                }elseif($subtotal<100){
+                    $envio = 3.00;
+                }elseif($subtotal>=100){
+                    $envio = 1.20;
+                }
+                $total = $subtotal + $envio;
+            ?>
+
             <!-- Resumen -->
             <div class="carrito-resumen">
                 <h3>Resumen del pedido</h3>
 
                 <div class="resumen-row">
                     <span>Subtotal</span>
-                    <span><?= number_format($total, 2) ?> €</span>
+                    <span><?= number_format($subtotal, 2) ?> €</span>
                 </div>
                 <div class="resumen-row">
                     <span>Envío</span>
-                    <span>5.00 €</span>
+                    <span><?= $envio ?>€</span>
                 </div>
                 <div class="resumen-divider"></div>
                 <div class="resumen-row resumen-total">
                     <span>Total estimado</span>
-                    <span><?= number_format($total + 5, 2) ?> €</span>
+                    <span><?= number_format($total, 2) ?> €</span>
                 </div>
 
                 <a href="index.php?action=procesarCompra" class="btn-checkout">

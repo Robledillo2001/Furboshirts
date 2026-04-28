@@ -58,10 +58,16 @@
 
         <div class="header-actions">
             <?php if($rol_actual !=='admin'):?>
-                <div class="search-bar">
-                    <input type="text" placeholder="Buscar...">
-                    <button><i class="fas fa-search"></i></button>
-                </div>
+                <form action="index.php" method="GET">
+                    <input type="hidden" name="action" value="mostrarCatalogo">
+                    <div class="search-bar">
+                        <input type="text" placeholder="Buscar..." 
+                        name="nombre" 
+                        id="nombre"
+                        value="<?= htmlspecialchars($_GET['nombre'] ?? '')?>">
+                        <button><i class="fas fa-search"></i></button>
+                    </div>
+                </form>
             <?php endif;?>
             
             <div class="icons">

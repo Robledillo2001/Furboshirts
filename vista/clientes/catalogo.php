@@ -11,6 +11,10 @@
                 <input type="hidden" name="tipo" value="<?= htmlspecialchars($_GET['tipo']) ?>">
             <?php endif; ?>
 
+            <?php if(!empty($_GET['nombre'])): ?>
+                <input type="hidden" name="nombre" value="<?= htmlspecialchars($_GET['nombre']) ?>">
+            <?php endif; ?>
+
             <div class="filter-group">
                 <label for="id_deporte">Deporte</label>
                 <select name="id_deporte" onchange="this.form.submit()">
@@ -122,6 +126,7 @@
             $filtros_url .= isset($_GET['id_cat'])     ? "&id_cat="     . (int)$_GET['id_cat']           : "";
             $filtros_url .= isset($_GET['id_equipo'])  ? "&id_equipo="  . (int)$_GET['id_equipo']        : "";
             $filtros_url .= isset($_GET['ano_edicion']) ? "&ano_edicion=" . urlencode($_GET['ano_edicion']) : "";
+            $filtros_url .= isset($_GET['nombre']) ? "&nombre=" . urlencode($_GET['nombre']) : "";
 
             if ($paginaActual > 1): ?>
                 <a href="index.php?action=<?= $action_actual ?>&pagina=<?= $paginaActual - 1 ?><?= $filtros_url ?>" class="btn-pag">Anterior</a>

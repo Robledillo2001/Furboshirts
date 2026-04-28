@@ -27,6 +27,11 @@
                 if (!empty($filtros['tipo'])) {
                     $sql .= " AND e.TIPO = :tipo";
                 }
+                //Si se ha empleado el buscador
+                if(!empty($filtros['nombre'])){
+                    $sql.=" AND p.NOMBRE LIKE :nombre";
+                }
+
                 //Si se especifica competiciones de cada competición
                 if (!empty($filtros['id_comp'])) {
                     $sql .= " AND pc.ID_COMP = :id_comp";
@@ -55,6 +60,12 @@
                 //Lectura de parametros
                 if (!empty($filtros['tipo'])) {//Ponemos parametros si hay un tipo de equipo
                     $stmt->bindValue(':tipo', $filtros['tipo'], PDO::PARAM_STR);
+                }
+
+                if (!empty($filtros['nombre'])) {
+                    // Usamos los comodines % para que busque cualquier coincidencia en el nombre
+                    $valorBusqueda = "%" . $filtros['nombre'] . "%";
+                    $stmt->bindValue(':nombre', $valorBusqueda, PDO::PARAM_STR);
                 }
 
                 if (!empty($filtros['id_comp'])) {//Ponemos parametros si hay se pide una competencia especifica
@@ -99,6 +110,12 @@
                 if (!empty($filtros['tipo'])) {
                     $sql .= " AND e.TIPO = :tipo";
                 }
+
+                //Si se ha empleado el buscador
+                if(!empty($filtros['nombre'])){
+                    $sql.=" AND p.NOMBRE LIKE :nombre";
+                }
+
                 if (!empty($filtros['id_comp'])) {
                     $sql .= " AND pc.ID_COMP = :id_comp";
                 }
@@ -119,6 +136,11 @@
 
                 if (!empty($filtros['tipo'])) {
                     $stmt->bindValue(':tipo', $filtros['tipo'], PDO::PARAM_STR);
+                }
+                if (!empty($filtros['nombre'])) {
+                    // Usamos los comodines % para que busque cualquier coincidencia en el nombre
+                    $valorBusqueda = "%" . $filtros['nombre'] . "%";
+                    $stmt->bindValue(':nombre', $valorBusqueda, PDO::PARAM_STR);
                 }
                 if (!empty($filtros['id_comp'])) {
                     $stmt->bindValue(':id_comp', $filtros['id_comp'], PDO::PARAM_INT);
@@ -283,14 +305,85 @@
                     $stmt->bindValue(':nombre_p',  $c['nombre_personalizado'] ?? null, PDO::PARAM_STR);
 
                     $stmt->execute();
+
+                    $this->controlarStock($c['id'],$c['talla'],$c['cantidad']);
                 }
 
                 $this->db->commit();
+                return $id_pedido;//Devolvemos el id del pedido si se insertaraon los datos del pedido y detalles
             }catch(PDOException $e){
                 if($this->db->inTransaction()){
                     $this->db->rollBack();
                 }
                 die("Error al Guardar el pedido : ".$e->getMessage());
+            }
+        }
+
+        private function controlarStock($id_prod,$talla,$cantidad){//Metodo privado para controlar eliminar la cantidad del stock de una talla al realizar el pedido e insertar el detalle
+            try{
+                //Hacemos una consulta conjunta para sacar el ID_TALLA
+                $sql = "SELECT ID_TALLA FROM tallas WHERE TALLA = :talla";
+                $stmt = $this->db->prepare($sql);
+                $stmt->execute([":talla" => $talla]);
+
+                $talla_data=$stmt->fetch(PDO::FETCH_ASSOC);
+
+                if($talla_data){//SI el ID de la talla esta en la consulta se hace un UPDATE
+                    $id_talla=$talla_data['ID_TALLA'];
+                    $sql="UPDATE productos_tallas
+                        SET STOCK_ESPECIFICO=STOCK_ESPECIFICO-:cantidad
+                        WHERE ID_PRODUCTO=:id_prod
+                        AND ID_TALLA=:id_talla";
+                    $stmt=$this->db->prepare($sql);
+                    $stmt->execute([
+                        ":cantidad"=>$cantidad,
+                        ":id_prod"=>$id_prod,
+                        ":id_talla"=>$id_talla
+                    ]);
+                    return "Stock actualizado";
+                }
+                return "No se pudo actualizar el Stock";
+            }catch(PDOException $e){
+                if($this->db->inTransaction()){
+                    $this->db->rollBack();
+                }
+                die("Error al intentar controlar el stock de un producto:".$e->getMessage());
+            }
+        }
+
+        public function obtenerDetallesPedido($id_pedido){
+            try{
+                //Consulta conjunta con el detalle
+                $sql="SELECT dp.*, p.NOMBRE as NOMBRE_PRODUCTO 
+                    FROM detalles_pedido dp
+                    JOIN productos p ON dp.ID_PRODUCTO = p.ID_PRODUCTO
+                    WHERE dp.ID_PEDIDO = :id_pedido";
+                
+                $stmt = $this->db->prepare($sql);
+                $stmt->bindValue(':id_pedido', $id_pedido, PDO::PARAM_INT);
+                $stmt->execute();
+                
+                return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            }catch(PDOException $e){
+                die("Error al obtener los detalles del pedido: " . $e->getMessage());
+            }
+        }
+
+        public function registrarFacturas($id_pedido,$ruta){//Metodo para Insertar las facturas de cada pedido
+            try{
+                $this->db->beginTransaction();
+                $sql = "INSERT INTO facturas (RUTA, ID_PEDIDO) VALUES (:ruta, :id_p)";
+                $stmt = $this->db->prepare($sql);
+                $stmt->bindValue(':ruta', $ruta, PDO::PARAM_STR);
+                $stmt->bindValue(':id_p', $id_pedido, PDO::PARAM_INT);
+                $stmt->execute();
+                $this->db->commit();
+                return "Factura insertada";
+            }catch(PDOException $e){
+                if($this->db->inTransaction()){
+                    $this->db->rollBack();
+                }
+                die("Error al registrar la factura: " . $e->getMessage());
             }
         }
 

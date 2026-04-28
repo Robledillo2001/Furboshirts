@@ -19,7 +19,15 @@
         foreach ($_SESSION['carrito'] as $item) {
             $subtotal += $item['precio'] * ($item['cantidad'] ?? 1);
         }
-        $envio = 5.00;
+        $envio = 0.00;
+
+        if($subtotal<40){
+            $envio = 4.50;
+        }elseif($subtotal<100){
+            $envio = 3.00;
+        }elseif($subtotal>=100){
+            $envio = 1.20;
+        }
         $total = $subtotal + $envio;
     ?>
 
@@ -30,14 +38,22 @@
             <div class="checkout-left">
                 <div class="checkout-section">
                     <h3><i class="fas fa-map-marker-alt"></i> Dirección de Entrega</h3>
-                    <div class="resumen-envio">
-                        <label for="direccion-api"><i class="fas fa-home"></i> Dirección completa</label>
-                        <input type="text" name="direccion" id="direccion-api" required placeholder="Calle, número, ciudad, código postal...">
+                    <div class="input-group-ubicacion" style="display: flex; gap: 10px; margin-bottom: 10px;">
+                        <input type="text" id="direccion-api" name="direccion" 
+                            placeholder="Calle, número, ciudad..." required 
+                            style="flex: 1; padding: 12px; border-radius: 8px; border: 1px solid var(--gris-borde);">
+                        
+                        <button type="button" onclick="validarDireccion()" class="btn-validar" 
+                                style="background: var(--verde-medio); color: white; border: none; padding: 0 15px; border-radius: 8px; cursor: pointer;">
+                            <i class="fas fa-search-location"></i> Validar
+                        </button>
                     </div>
-                    <div class="mapa-placeholder">
-                        <i class="fas fa-map-marked-alt"></i>
-                        <span>Mapa de Geoapify</span>
-                    </div>
+                    
+                    <div id="status-ubicacion" style="font-size: 0.85rem; margin-bottom: 10px; display: none;"></div>
+                    <div id="map" style="height: 250px; width: 100%; margin-top: 10px; border-radius: 8px; display: none; border: 1px solid var(--gris-borde);"></div>
+
+                    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+                    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
                 </div>
 
                 <div class="checkout-section">
@@ -54,6 +70,10 @@
                         <label class="metodo-option">
                             <input type="radio" name="metodo_pago" value="PayPal">
                             <span><i class="fab fa-paypal"></i> PayPal</span>
+                        </label>
+                        <label>
+                            <span>Codigo Metodo de Pago</span>
+                            <input type="text" name="codigo" id="codigo">
                         </label>
                     </div>
                 </div>
@@ -153,187 +173,6 @@
     <?php endif; ?>
 </div>
 
-<style>
-/* Modal overlay */
-.modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.55);
-    backdrop-filter: blur(4px);
-    z-index: 9999;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    animation: fadeIn 0.2s ease;
-}
-
-@keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
-@keyframes slideUp { from { transform: translateY(24px); opacity:0; } to { transform:translateY(0); opacity:1; } }
-
-.modal-card {
-    background: #fff;
-    border-radius: 24px;
-    padding: 48px 40px;
-    max-width: 460px;
-    width: 100%;
-    text-align: center;
-    box-shadow: 0 24px 80px rgba(0,0,0,0.2);
-    animation: slideUp 0.25s ease;
-}
-
-.modal-icon {
-    width: 72px;
-    height: 72px;
-    background: linear-gradient(135deg, rgba(80,185,94,0.15), rgba(33,99,42,0.08));
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 20px;
-    font-size: 1.8rem;
-    color: var(--verde-medio);
-    border: 2px solid rgba(80,185,94,0.25);
-}
-
-.modal-title {
-    font-size: 1.5rem;
-    font-weight: 900;
-    color: var(--texto-oscuro);
-    margin-bottom: 10px;
-}
-
-.modal-subtitle {
-    color: var(--texto-medio);
-    font-size: 0.88rem;
-    line-height: 1.6;
-    margin-bottom: 24px;
-}
-
-.modal-summary {
-    background: var(--gris-fondo);
-    border-radius: 14px;
-    padding: 18px 20px;
-    margin-bottom: 28px;
-    border: 1px solid var(--gris-borde);
-    text-align: left;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.modal-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 0.88rem;
-    color: var(--texto-medio);
-    gap: 12px;
-}
-
-.modal-row span:first-child {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-weight: 600;
-    white-space: nowrap;
-    flex-shrink: 0;
-}
-
-.modal-row span:first-child i { color: var(--verde-medio); }
-
-.modal-val {
-    font-weight: 600;
-    color: var(--texto-oscuro);
-    text-align: right;
-    word-break: break-word;
-}
-
-.modal-row--total { padding-top: 10px; border-top: 1px solid var(--gris-borde); }
-.modal-total { color: var(--verde-medio) !important; font-size: 1.05rem; font-weight: 900 !important; }
-
-.modal-actions {
-    display: flex;
-    gap: 12px;
-}
-
-.modal-btn-cancel {
-    flex: 1;
-    padding: 13px;
-    border: 1.5px solid var(--gris-borde);
-    border-radius: 12px;
-    background: #fff;
-    color: var(--texto-medio);
-    font-size: 0.88rem;
-    font-weight: 700;
-    cursor: pointer;
-    font-family: inherit;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-}
-
-.modal-btn-cancel:hover {
-    border-color: var(--verde-claro);
-    color: var(--texto-oscuro);
-}
-
-.modal-btn-confirm {
-    flex: 1;
-    padding: 13px;
-    background: linear-gradient(135deg, var(--verde-medio), var(--verde-hover));
-    color: #fff;
-    border: none;
-    border-radius: 12px;
-    font-size: 0.88rem;
-    font-weight: 800;
-    cursor: pointer;
-    font-family: inherit;
-    box-shadow: 0 4px 14px rgba(33,99,42,0.3);
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-}
-
-.modal-btn-confirm:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 6px 20px rgba(33,99,42,0.4);
-}
-</style>
-
-<script>
-function abrirModal() {
-    const direccion = document.getElementById('direccion-api').value.trim();
-    if (!direccion) {
-        document.getElementById('direccion-api').focus();
-        document.getElementById('direccion-api').style.borderColor = '#e53e3e';
-        document.getElementById('direccion-api').style.boxShadow = '0 0 0 3px rgba(229,62,62,0.18)';
-        return;
-    }
-    const pago = document.querySelector('input[name="metodo_pago"]:checked').value;
-    document.getElementById('modal-direccion').textContent = direccion;
-    document.getElementById('modal-pago').textContent = pago;
-    document.getElementById('modal-confirm').style.display = 'flex';
-    document.body.style.overflow = 'hidden';
-}
-
-function cerrarModal() {
-    document.getElementById('modal-confirm').style.display = 'none';
-    document.body.style.overflow = '';
-}
-
-document.getElementById('direccion-api').addEventListener('input', function() {
-    this.style.borderColor = '';
-    this.style.boxShadow = '';
-});
-
-document.getElementById('modal-confirm').addEventListener('click', function(e) {
-    if (e.target === this) cerrarModal();
-});
-</script>
+<script src="assets/js/carrito.js"></script>
 
 <?php include __DIR__ . '/../footer.php'; ?>
